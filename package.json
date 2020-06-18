@@ -1,0 +1,22 @@
+{
+  "name": "com.adorkable.eunomia-unity",
+  "displayName": "Eunomia Unity",
+  "version": "1.0.0",
+  "unity": "2019.2",
+  "category": "Library/Utility",
+  "keywords": [
+    "package",
+    "unity"
+  ],
+  "description": "Eunomia general utility library for Unity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ian G <yo.ian.g@gmail.com>",
+  "license": "ISC",
+  "type": "library",
+  "dependencies": {
+    "com.adorkable.eunomia-csharp": "1.0.0"
+  }
+}

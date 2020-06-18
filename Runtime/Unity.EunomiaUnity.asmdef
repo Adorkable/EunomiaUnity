@@ -1,0 +1,14 @@
+{
+    "name": "EunomiaUnity",
+    "references": [
+        "GUID:ad797131972064e7d9064b2ac6ba9b47"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
