@@ -4,8 +4,19 @@ using Eunomia;
 using UnityEngine;
 
 namespace EunomiaUnity {
+    public interface GetKeyDownSource {
+        bool GetKeyDown(KeyCode key);
+    }
+
     [Serializable]
     public class SecretCodeDetector : MonoBehaviour {
+        private class InputWrapper : GetKeyDownSource {
+            public bool GetKeyDown(KeyCode key) {
+                return Input.GetKeyDown(key);
+            }
+        }
+
+        public GetKeyDownSource input = new InputWrapper();
         public SecretCode[] secretCodes;
 
         protected class Attempt {
@@ -42,6 +53,14 @@ namespace EunomiaUnity {
             this.secretCodes = Arrays.AddToBack(code, this.secretCodes);
         }
 
+        protected bool GetKeyDown(KeyCode key) {
+            if (this.input == null) {
+                this.input = new InputWrapper();
+            }
+
+            return this.input.GetKeyDown(key);
+        }
+
         void Update() {
             if (this.TimeSinceLastMatchSeconds >= this.MaximumBetweenSeconds && this.attempts.Count > 0) {
                 this.attempts.Clear();
@@ -50,8 +69,10 @@ namespace EunomiaUnity {
             }
 
             this.TimeSinceLastMatchSeconds += Time.deltaTime;
+            // TODO: ouch, is this really going through all KeyCodes every frame??
+            // ----: find a faster way to get all keys down at the moment
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode))) {
-                if (Input.GetKeyDown(key)) {
+                if (this.GetKeyDown(key)) {
                     this.TestMatches(key);
                 }
             }
