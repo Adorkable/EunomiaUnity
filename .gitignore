@@ -1,0 +1,12 @@
+/*.meta
+/Assets.index
+/Materials
+/Presets
+/Readme.asset
+/ExampleAssets
+/Scenes
+/Scripts
+/Settings
+/TutorialInfo
+
+/**/._*.*
