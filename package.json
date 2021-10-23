@@ -16,6 +16,6 @@
   "author": "Ian G <yo.ian.g@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "com.adorkable.eunomia-csharp": "1.1.0"
+    "com.adorkable.eunomia-csharp": "1.2.0"
   }
 }

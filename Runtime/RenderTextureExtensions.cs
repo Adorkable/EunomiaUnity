@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EunomiaUnity
 {
-    public static class RenderTextureExtensions
+    public static class RenderTextureExtensions_WriteToDisk
     {
         // TODO: autodetecting encoder from extension WriteToDisk function
 
@@ -57,6 +57,29 @@ namespace EunomiaUnity
             var savePath = $"{Application.temporaryCachePath}/RenderTexture-{renderTexture.GetInstanceID()}_{DateTime.Now.ToFileTimeUtc()}.jpg";
             WriteJPGToDisk(renderTexture, savePath, fileTextureFormat);
             return savePath;
+        }
+    }
+
+    public static class RenderTextureExtensions_Clear
+    {
+        public static void Clear(this RenderTexture renderTexture)
+        {
+            Clear(renderTexture, Color.clear);
+        }
+
+        public static void Clear(this RenderTexture renderTexture, Color clearColor)
+        {
+            Clear(renderTexture, true, true, clearColor);
+        }
+
+        public static void Clear(this RenderTexture renderTexture, bool enableClearColor, bool enableClearDepth, Color clearColor, float clearDepth = 1.0f)
+        {
+            RenderTexture previous = RenderTexture.active;
+
+            RenderTexture.active = renderTexture;
+            GL.Clear(enableClearDepth, enableClearColor, clearColor, clearDepth);
+
+            RenderTexture.active = previous;
         }
     }
 }
