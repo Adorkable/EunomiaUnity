@@ -1,10 +1,14 @@
-namespace EunomiaUnity {
-    public class OnFinishedDeactivator : OnFinishedResponder {
-        protected override void DoResponse() {
+namespace EunomiaUnity
+{
+    public class OnFinishedDeactivator : OnFinishedResponder
+    {
+        protected override void DoResponse()
+        {
             this.DoDeactivate();
         }
 
-        public void DoDeactivate() {
+        public void DoDeactivate()
+        {
             this.gameObject.SetActive(false);
         }
     }

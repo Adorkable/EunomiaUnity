@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public static class ApplicationExtensions
+namespace EunomiaUnity
 {
-    public static string executablePath
+    public static class ApplicationExtensions
     {
-        get
+        public static string executablePath
         {
+            get
+            {
 #if UNITY_EDITOR
-            return Application.dataPath + "/../";
+                return Application.dataPath + "/../";
 #elif UNITY_STANDALONE_WIN
             return Application.dataPath + "/../";
 #elif UNITY_STANDALONE_OSX
             return Application.dataPath + "/../../";
 #endif
+            }
         }
     }
 }

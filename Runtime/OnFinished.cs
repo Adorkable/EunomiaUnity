@@ -1,5 +1,7 @@
-namespace EunomiaUnity {
-    interface OnFinished {
+namespace EunomiaUnity
+{
+    interface OnFinished
+    {
         bool IsFinished();
     }
 }

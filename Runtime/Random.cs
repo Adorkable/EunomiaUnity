@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // TODO: only use Unity Random
-namespace EunomiaUnity {
+namespace EunomiaUnity
+{
     [Serializable]
-    public class Random {
+    public class Random
+    {
         [UnityEngine.SerializeField, HideInInspector]
         private UnityEngine.Random.State unityRandomState;
 
-        [UnityEngine.SerializeField, HideInInspector]
-        public Eunomia.WordList NounList { get; private set; }
-
         // TODO: does it make sense to wrap this way? considering erreyone is static
-        public Random(UnityEngine.Random.State unityRandomState, Eunomia.WordList nounList) {
+        public Random(UnityEngine.Random.State unityRandomState)
+        {
             // TODO: test if we're re-setting when we deserialize
             this.unityRandomState = unityRandomState;
             UnityEngine.Random.state = this.unityRandomState;
-
-            this.NounList = nounList;
         }
 
         public static Color ColorRGB
@@ -36,7 +35,8 @@ namespace EunomiaUnity {
 
         public static Color ColorRGBA
         {
-            get {
+            get
+            {
                 return new Color(
                     UnityEngine.Random.Range(0.0f, 1.0f),
                     UnityEngine.Random.Range(0.0f, 1.0f),
@@ -46,38 +46,26 @@ namespace EunomiaUnity {
             }
         }
 
-        public static int RandomIndex<ItemType>(List<ItemType> list) {
-            if (list.Count <= 0) {
+        // TODO: use Eunomia's IEnumerable.RandomIndex
+        public static int RandomIndex<ItemType>(IEnumerable<ItemType> enumerable)
+        {
+            var count = enumerable.Count();
+            if (count <= 0)
+            {
                 throw new IndexOutOfRangeException("Provided list is zero length");
             }
-            return UnityEngine.Random.Range(0, list.Count);
+            return UnityEngine.Random.Range(0, count);
         }
 
-        public static ItemType RandomElement<ItemType>(List<ItemType> list) {
-            if (list.Count <= 0) {
+        // TODO: use Eunomia's IEnumerable.RandomElement
+        public static ItemType RandomElement<ItemType>(IEnumerable<ItemType> enumerable)
+        {
+            if (enumerable.Count() <= 0)
+            {
                 throw new IndexOutOfRangeException("Provided list is zero length");
             }
-            return list[Random.RandomIndex(list)];
-        }
-
-        public string Noun {
-            get {
-                var nouns = this.NounList.All;
-                if (nouns == null || nouns.Count <= 0) {
-                    throw new IndexOutOfRangeException("No nouns found");
-                }
-
-                return EunomiaUnity.Random.RandomElement(nouns);
-            }
-        }
-
-        public string NounWithLength(int length) {
-            var nounsWithLength = this.NounList.WithLength(length);
-            if (nounsWithLength == null || nounsWithLength.Count <= 0) {
-                throw new IndexOutOfRangeException("No nouns found with length " + length);
-            }
-
-            return EunomiaUnity.Random.RandomElement(nounsWithLength);
+            var index = Random.RandomIndex(enumerable);
+            return enumerable.ElementAt(index);
         }
     }
 }

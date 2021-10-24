@@ -1,28 +1,36 @@
 using System.Linq;
 using UnityEngine;
 
-namespace EunomiaUnity {
+namespace EunomiaUnity
+{
 
-    abstract public class OnFinishedResponder : MonoBehaviour {
+    abstract public class OnFinishedResponder : MonoBehaviour
+    {
         // TODO: support any components finished
         [Tooltip("All Components that must be finished")]
         public Component[] WaitToFinish;
 
-        void Update() {
-            bool allFinished = WaitToFinish.Aggregate(true, (accumulated, component) => {
-                if (accumulated == false) {
+        void Update()
+        {
+            bool allFinished = WaitToFinish.Aggregate(true, (accumulated, component) =>
+            {
+                if (accumulated == false)
+                {
                     return false;
                 }
 
                 return this.IsFinished(component);
             });
-            if (allFinished) {
+            if (allFinished)
+            {
                 this.DoResponse();
             }
         }
 
-        bool IsFinished(Component component) {
-            switch (component) {
+        bool IsFinished(Component component)
+        {
+            switch (component)
+            {
                 case OnFinished onFinished:
                     return this.IsFinished(onFinished);
 
@@ -38,15 +46,18 @@ namespace EunomiaUnity {
             }
         }
 
-        bool IsFinished(OnFinished onFinished) {
+        bool IsFinished(OnFinished onFinished)
+        {
             return onFinished.IsFinished();
         }
 
-        bool IsFinished(ParticleSystem particleSystem) {
+        bool IsFinished(ParticleSystem particleSystem)
+        {
             return particleSystem.isStopped;
         }
 
-        bool IsFinished(AudioSource audioSource) {
+        bool IsFinished(AudioSource audioSource)
+        {
             return !audioSource.isPlaying;
         }
 
