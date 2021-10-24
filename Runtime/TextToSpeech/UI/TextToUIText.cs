@@ -18,31 +18,12 @@ namespace EunomiaUnity.TextToSpeech.UI
         [SerializeField]
         private string stoppedText = "<stopped>";
 
-        [SerializeField]
-        private Canvas canvas;
-
         void Awake()
         {
             if (text == null)
             {
                 this.LogMissingRequiredReference(typeof(Text));
-                gameObject.SetActive(false);
-            }
-        }
-
-        void OnEnable()
-        {
-            if (canvas != null)
-            {
-                canvas.enabled = true;
-            }
-        }
-
-        void OnDisable()
-        {
-            if (canvas != null)
-            {
-                canvas.enabled = false;
+                enabled = false;
             }
         }
 
