@@ -9,6 +9,18 @@ namespace EunomiaUnity
     {
         private Eunomia.MainThreadDispatcher mainThreadDispatcher;
 
+        public Action<Exception> logUnhandledExceptions
+        {
+            get
+            {
+                return mainThreadDispatcher.logUnhandledExceptions;
+            }
+            set
+            {
+                mainThreadDispatcher.logUnhandledExceptions = value;
+            }
+        }
+
         protected void Awake()
         {
             mainThreadDispatcher = new Eunomia.MainThreadDispatcher();
