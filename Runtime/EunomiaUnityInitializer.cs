@@ -6,9 +6,12 @@ namespace EunomiaUnity
     {
         [SerializeField]
         private EunomiaUnity.Random random;
+        public EunomiaUnity.Random Random => random;
+
         protected override void Perform()
         {
-            random = new EunomiaUnity.Random(UnityEngine.Random.state);
+            var unityRandom = new UnityEngineRandomWrapper(UnityEngine.Random.state);
+            random = new EunomiaUnity.Random(unityRandom);
         }
     }
 }

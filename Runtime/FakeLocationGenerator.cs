@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Eunomia;
 using UnityEngine;
 
 namespace EunomiaUnity
 {
     public static class FakeLocationGenerator
     {
-        public static float GenerateNormalizedEnterValue(bool allow0 = true, bool allow1 = true)
+        public static float GenerateNormalizedEnterValue(Random random, bool allow0 = true, bool allow1 = true)
         {
             List<float> possibilities = new List<float>();
             if (allow0)
@@ -23,14 +24,14 @@ namespace EunomiaUnity
                 throw new ArgumentOutOfRangeException("allow 0 and allow 1 cannot both be false");
             }
 
-            return EunomiaUnity.Random.RandomElement(possibilities);
+            return possibilities.RandomElement(random);
         }
 
-        public static Vector2 GenerateNormalizedEnterLocation(bool x0 = true, bool x1 = true, bool y0 = true, bool y1 = true)
+        public static Vector2 GenerateNormalizedEnterLocation(Random random, bool x0 = true, bool x1 = true, bool y0 = true, bool y1 = true)
         {
             return new Vector2(
-                GenerateNormalizedEnterValue(x0, x1),
-                GenerateNormalizedEnterValue(y0, y1)
+                GenerateNormalizedEnterValue(random, x0, x1),
+                GenerateNormalizedEnterValue(random, y0, y1)
                 );
         }
 

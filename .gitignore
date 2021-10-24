@@ -1,13 +1,21 @@
 # Unity
-/*.meta
 /Assets.index
+/Assets.index.meta
 /Materials
+/Materials.meta
 /Presets
+/Presets.meta
 /Readme.asset
+/Readme.asset.meta
 /ExampleAssets
+/ExampleAssets.meta
 /Scenes
+/Scenes.meta
 /Scripts
+/Scripts.meta
 /Settings
+/Settings.meta
 /TutorialInfo
+/TutorialInfo.meta
 
 /**/._*.*
