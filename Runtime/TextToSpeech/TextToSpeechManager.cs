@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Eunomia;
 using UnityEngine;
 
 namespace EunomiaUnity.TextToSpeech
@@ -14,69 +13,79 @@ namespace EunomiaUnity.TextToSpeech
         private TextToSpeech macOSTextToSpeech;
 
         [Serializable]
-        public enum EditorTextToSpeech
+        public enum EditorTextToSpeechType
         {
             Console,
             UI,
             Platform
         }
         [SerializeField]
-        private EditorTextToSpeech editorTextToSpeech = EditorTextToSpeech.Console;
+        private EditorTextToSpeechType editorTextToSpeech = EditorTextToSpeechType.Console;
+        protected EditorTextToSpeechType EditorTextToSpeech => editorTextToSpeech;
 
         private TextToUnityConsole textToUnityConsole;
+        protected TextToUnityConsole TextToUnityConsole => textToUnityConsole;
 
         [SerializeField]
         private UI.TextToUIText textToUIText;
+        protected UI.TextToUIText TextToUIText => textToUIText;
 
-        public bool TextToSpeechEnabled
-        {
-            get
-            {
-                return textToSpeechEnabled;
-            }
-            set
-            {
-                textToSpeechEnabled = value;
-            }
-        }
-        private bool textToSpeechEnabled = false;
-
-        void Awake()
+        protected virtual void Awake()
         {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        if (windowsTextToSpeech == null)
-        {
-            this.LogMissingRequiredReference(typeof(TextToSpeech), "WindowsTextToSpeech");
-        }
+            if (windowsTextToSpeech == null)
+            {
+                this.LogMissingRequiredReference(typeof(TextToSpeech), "WindowsTextToSpeech");
+            }
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        if (macOSTextToSpeech == null)
-        {
-            this.LogMissingRequiredReference(typeof(TextToSpeech), "MacOSTextToSpeech");
-        }
+            if (macOSTextToSpeech == null)
+            {
+                this.LogMissingRequiredReference(typeof(TextToSpeech), "MacOSTextToSpeech");
+            }
 #endif
 
 #if UNITY_EDITOR
-        textToUnityConsole = gameObject.AddComponent<TextToUnityConsole>();
+            // TODO: only do if selected as current Text To Speech
+            textToUnityConsole = gameObject.AddComponent<TextToUnityConsole>();
 #endif
         }
 
-        private TextToSpeech GetCurrentTextToSpeech()
+        protected TextToSpeech GetCurrentTextToSpeech()
         {
 #if UNITY_EDITOR
-        switch (editorTextToSpeech)
-        {
-            case EditorTextToSpeech.Console:
-                return textToUnityConsole;
+            switch (editorTextToSpeech)
+            {
+                case EditorTextToSpeechType.Console:
+                    return textToUnityConsole;
 
-            case EditorTextToSpeech.UI:
-                return textToUIText;
-        }
+                case EditorTextToSpeechType.UI:
+                    return textToUIText;
+            }
 #endif
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        return windowsTextToSpeech;
+            return windowsTextToSpeech;
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        return macOSTextToSpeech;
+            return macOSTextToSpeech;
 #endif
+        }
+
+        protected virtual void UpdateCurrentTextToSpeech(bool enabled)
+        {
+            var textToSpeech = GetCurrentTextToSpeech();
+            if (textToSpeech != null)
+            {
+                textToSpeech.enabled = enabled;
+            }
+        }
+
+        public virtual void OnEnable()
+        {
+            UpdateCurrentTextToSpeech(true);
+        }
+
+        public virtual void OnDisable()
+        {
+            UpdateCurrentTextToSpeech(false);
         }
 
         public async Task StopAndSpeak(string speak, float pauseDuration = 0.5f)
@@ -116,7 +125,7 @@ namespace EunomiaUnity.TextToSpeech
 
         public void Speak(string text)
         {
-            if (textToSpeechEnabled == false)
+            if (enabled == false)
             {
                 return;
             }
@@ -137,7 +146,7 @@ namespace EunomiaUnity.TextToSpeech
 
         public void StopSpeaking()
         {
-            if (textToSpeechEnabled == false)
+            if (enabled == false)
             {
                 return;
             }
@@ -149,26 +158,6 @@ namespace EunomiaUnity.TextToSpeech
             }
 
             textToSpeech.StopSpeaking();
-        }
-
-        public void SetTextToSpeech(bool enabled)
-        {
-            textToSpeechEnabled = enabled;
-            var textToSpeech = GetCurrentTextToSpeech();
-            if (textToSpeech != null)
-            {
-                textToSpeech.enabled = enabled;
-            }
-        }
-
-        public void SetTextToSpeechEnabled()
-        {
-            SetTextToSpeech(true);
-        }
-
-        public void SetTextToSpeechDisabled()
-        {
-            SetTextToSpeech(false);
         }
     }
 
