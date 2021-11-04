@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace EunomiaUnity.TextToSpeech
@@ -88,7 +88,7 @@ namespace EunomiaUnity.TextToSpeech
             UpdateCurrentTextToSpeech(false);
         }
 
-        public async Task StopAndSpeak(string speak, float pauseDuration = 0.5f)
+        public async UniTask StopAndSpeak(string speak, float pauseDuration = 0.5f)
         {
             if (!IsValidSpeechText(speak))
             {
@@ -105,7 +105,7 @@ namespace EunomiaUnity.TextToSpeech
                 Debug.LogException(exception, this);
             }
 
-            await Task.Delay((int)(pauseDuration * 1000));
+            await UniTask.Delay((int)(pauseDuration * 1000));
 
             try
             {
