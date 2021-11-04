@@ -8,19 +8,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace EunomiaUnity.UI
+namespace EunomiaUnity
 {
-    [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(RawImage))]
+    [RequireComponent(typeof(VideoPlayer))]
     public class Video : MonoBehaviour
     {
         private VideoPlayer videoPlayer;
-        private RawImage rawImage;
-        [SerializeField]
-        private RenderTexture renderTextureTemplate;
-        private RenderTexture renderTexture;
-
-        [SerializeField]
-        private Texture2D editorPreview;
 
         [ShowNativeProperty]
         public bool IsLooping
@@ -147,7 +140,6 @@ namespace EunomiaUnity.UI
         protected void Awake()
         {
             videoPlayer = this.RequireComponentInstance<VideoPlayer>();
-            rawImage = this.RequireComponentInstance<RawImage>();
 
             if (videoPlayer == null)
             {
@@ -158,31 +150,6 @@ namespace EunomiaUnity.UI
             {
                 videoPlayer.enabled = true;
             }
-            if (rawImage == null)
-            {
-                enabled = false;
-                return;
-            }
-            else
-            {
-                rawImage.enabled = true;
-            }
-            if (renderTextureTemplate == null)
-            {
-                this.LogMissingRequiredReference(typeof(VideoPlayer));
-                enabled = false;
-                return;
-            }
-
-            var rawImageTransform = rawImage.GetComponent<RectTransform>();
-            renderTexture = new RenderTexture(renderTextureTemplate);
-            renderTexture.name = this.name;
-            renderTexture.Create();
-
-            videoPlayer.renderMode = VideoRenderMode.RenderTexture;
-            videoPlayer.targetTexture = renderTexture;
-
-            rawImage.texture = renderTexture;
 
             videoPlayer.prepareCompleted += VideoPlayerPrepareCompleted;
             videoPlayer.started += VideoPlayerStarted;
@@ -202,13 +169,11 @@ namespace EunomiaUnity.UI
 
         void OnEnable()
         {
-            rawImage.enabled = true;
             Play();
         }
 
         void OnDisable()
         {
-            rawImage.enabled = false;
             Pause();
         }
 
@@ -354,43 +319,21 @@ namespace EunomiaUnity.UI
         [Button]
         void SaveCurrentFrameToDisk()
         {
-            if (rawImage == null || rawImage.texture == null || videoPlayer == null)
+            if (videoPlayer == null || videoPlayer.texture == null)
             {
-                Debug.LogWarning("Raw Image, Raw Image's texture or Video Player not found, unable to Save Current Frame To Disk", this);
+                Debug.LogWarning("Unable to Save Current Frame To Disk, Video Player or Video Player's texture not found", this);
                 return;
             }
-            var rawImageTexture = (RenderTexture)rawImage.texture;
-            if (rawImageTexture == null)
+            var texture = (RenderTexture)videoPlayer.texture;
+            if (texture == null)
             {
-                Debug.LogWarning($"Unexpected texture type '{rawImage.texture.GetType()}'", this);
+                Debug.LogWarning($"Unable to Save Current Frame To Disk, expected Video Player's Texture to be {typeof(RenderTexture)}, received '{videoPlayer.texture.GetType()}'", this);
                 return;
             }
 
             var savePath = $"{Application.temporaryCachePath}/Video_{gameObject.name}-{gameObject.GetInstanceID()}_frame-{videoPlayer.frame}.png";
-            rawImageTexture.WritePNGToDisk(savePath);
+            texture.WritePNGToDisk(savePath);
             Debug.Log($"Current Frame saved to '{savePath}'", this);
-        }
-
-        public void SetRenderTextureSize(Vector2 size)
-        {
-            var resized = new RenderTexture((int)size.x, (int)size.y, renderTexture.depth, renderTexture.format);
-            resized.name = this.name;
-            resized.Create();
-
-            videoPlayer.targetTexture = resized;
-            rawImage.texture = resized;
-            renderTexture = resized;
-        }
-
-        void OnValidate()
-        {
-#if UNITY_EDITOR
-            var rawImage = GetComponent<RawImage>();
-            if (rawImage != null)
-            {
-                rawImage.texture = editorPreview;
-            }
-#endif
         }
     }
 }
