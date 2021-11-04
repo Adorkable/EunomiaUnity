@@ -5,43 +5,54 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Tests {
-    public class SecretCodeTests {
+namespace Tests
+{
+    public class SecretCodeTests
+    {
 
         // TODO: test multiple secret codes
 
-        private class SecretCodeTester : EunomiaUnity.InputTester {
+        private class SecretCodeTester : EunomiaUnity.InputTester
+        {
             protected EunomiaUnity.SecretCodeDetector secretCodeDetector;
             protected SecretCodeTesterMatchEvent matchEvent;
 
-            protected class SecretCodeTesterMatchEvent : EunomiaUnity.SecretCode.MatchEvent {
-                public static string MatchedLog(string letters) {
+            protected class SecretCodeTesterMatchEvent : EunomiaUnity.SecretCode.MatchEvent
+            {
+                public static string MatchedLog(string letters)
+                {
                     return letters + " matched";
                 }
 
                 protected bool matched = false;
 
-                public SecretCodeTesterMatchEvent(string letters) {
-                    this.AddListener(() => {
+                public SecretCodeTesterMatchEvent(string letters)
+                {
+                    this.AddListener(() =>
+                    {
                         Debug.Log(MatchedLog(letters));
 
                         this.matched = true;
                     });
                 }
 
-                public bool IsMatched {
-                    get {
+                public bool IsMatched
+                {
+                    get
+                    {
                         return this.matched;
                     }
                 }
             }
 
-            public virtual void Awake() {
+            public virtual void Awake()
+            {
                 this.secretCodeDetector = this.gameObject.AddComponent<EunomiaUnity.SecretCodeDetector>();
                 this.secretCodeDetector.input = this.inputMock;
             }
 
-            protected void AddSecretCode(string letters) {
+            protected void AddSecretCode(string letters)
+            {
                 this.matchEvent = new SecretCodeTesterMatchEvent(letters);
                 this.secretCodeDetector.secretCodes = new EunomiaUnity.SecretCode[] {
                     new EunomiaUnity.SecretCode {
@@ -51,16 +62,20 @@ namespace Tests {
                 };
             }
 
-            public bool IsMatched {
-                get {
+            public bool IsMatched
+            {
+                get
+                {
                     return this.matchEvent.IsMatched;
                 }
             }
         }
 
 
-        private class SuccessTester : SecretCodeTester {
-            public override void Awake() {
+        private class SuccessTester : SecretCodeTester
+        {
+            public override void Awake()
+            {
                 base.Awake();
 
                 var letters = "SUCCESS";
@@ -84,12 +99,15 @@ namespace Tests {
         }
 
         [UnityTest]
-        public IEnumerator TestSuccess() {
+        public IEnumerator TestSuccess()
+        {
             yield return new MonoBehaviourTest<SuccessTester>();
         }
 
-        private class TimeoutTester : SecretCodeTester {
-            public override void Awake() {
+        private class TimeoutTester : SecretCodeTester
+        {
+            public override void Awake()
+            {
                 base.Awake();
 
                 var letters = "TIMEOUT";
@@ -103,31 +121,34 @@ namespace Tests {
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.E),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.O),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.U),
-                    new EunomiaUnity.InputMock.Wait(11),
+                    new EunomiaUnity.InputMock.Wait(this.secretCodeDetector.MaximumBetweenSeconds + 1),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.T),
                     new EunomiaUnity.InputMock.Wait(1),
                 };
                 this.inputMock.actions.AddRange(actions);
             }
 
-            public override void Update() {
+            public override void Update()
+            {
                 base.Update();
 
-                Debug.Log("Updated");
-                if (!this.IsMatched) {
+                if (!this.IsMatched)
+                {
                     Assert.Fail("Secret code should not match");
                 }
             }
         }
 
         [UnityTest]
-        public IEnumerable TestTimeout() {
+        public IEnumerator TestTimeout()
+        {
             yield return new MonoBehaviourTest<TimeoutTester>();
-
         }
 
-        private class FailureTester : SecretCodeTester {
-            public override void Awake() {
+        private class FailureTester : SecretCodeTester
+        {
+            public override void Awake()
+            {
                 base.Awake();
 
                 var letters = "FAILURE";
@@ -143,7 +164,7 @@ namespace Tests {
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.R),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.X),
 
-                    new EunomiaUnity.InputMock.Wait(11),
+                    new EunomiaUnity.InputMock.Wait(this.secretCodeDetector.MaximumBetweenSeconds + 1),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.F),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.A),
                     new EunomiaUnity.InputMock.KeyDown(KeyCode.I),
@@ -155,17 +176,20 @@ namespace Tests {
                 this.inputMock.actions.AddRange(actions);
             }
 
-            public override void Update() {
+            public override void Update()
+            {
                 base.Update();
 
-                if (this.IsMatched) {
+                if (this.IsMatched)
+                {
                     Assert.Fail("Secret code should not match");
                 }
             }
         }
 
         [UnityTest]
-        public IEnumerable TestFailure() {
+        public IEnumerator TestFailure()
+        {
             yield return new MonoBehaviourTest<FailureTester>();
         }
     }

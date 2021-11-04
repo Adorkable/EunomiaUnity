@@ -1,3 +1,8 @@
+# macOS
+/.DS_Store
+
+/**/._*.*
+
 # Unity
 /Assets.index
 /Assets.index.meta
@@ -17,5 +22,7 @@
 /Settings.meta
 /TutorialInfo
 /TutorialInfo.meta
+/URP Example Assets
+/URP Example Assets.meta
 
-/**/._*.*
+
