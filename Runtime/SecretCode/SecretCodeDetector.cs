@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using Eunomia;
 using UnityEngine;
 
-namespace EunomiaUnity {
-    public interface GetKeyDownSource {
+namespace EunomiaUnity
+{
+    public interface GetKeyDownSource
+    {
         bool GetKeyDown(KeyCode key);
     }
 
     [Serializable]
-    public class SecretCodeDetector : MonoBehaviour {
-        private class InputWrapper : GetKeyDownSource {
-            public bool GetKeyDown(KeyCode key) {
+    public class SecretCodeDetector : MonoBehaviour
+    {
+        private class InputWrapper : GetKeyDownSource
+        {
+            public bool GetKeyDown(KeyCode key)
+            {
                 return Input.GetKeyDown(key);
             }
         }
@@ -19,24 +24,29 @@ namespace EunomiaUnity {
         public GetKeyDownSource input = new InputWrapper();
         public SecretCode[] secretCodes;
 
-        protected class Attempt {
+        protected class Attempt
+        {
             public SecretCode SecretCode { get; protected set; }
             public string LettersSoFar { get; protected set; }
 
-            public Attempt(SecretCode secretCode) {
+            public Attempt(SecretCode secretCode)
+            {
                 this.SecretCode = secretCode;
             }
 
-            public bool Try(KeyCode key) {
+            public bool Try(KeyCode key)
+            {
                 var lettersSoFar = this.LettersSoFar + key.ToString();
-                if (!this.SecretCode.Try(lettersSoFar)) {
+                if (!this.SecretCode.Try(lettersSoFar))
+                {
                     return false;
                 }
                 this.LettersSoFar = lettersSoFar;
                 return true;
             }
 
-            public bool IsMatched() {
+            public bool IsMatched()
+            {
                 return this.SecretCode.IsMatch(this.LettersSoFar);
             }
         }
@@ -45,59 +55,79 @@ namespace EunomiaUnity {
         public float MaximumBetweenSeconds = 10;
         protected float TimeSinceLastMatchSeconds;
 
-        void Awake() {
+        void Awake()
+        {
             this.attempts = new List<Attempt>();
         }
 
-        public void Add(SecretCode code) {
+        public void Add(SecretCode code)
+        {
             this.secretCodes = Arrays.AddToBack(code, this.secretCodes);
         }
 
-        protected bool GetKeyDown(KeyCode key) {
-            if (this.input == null) {
+        protected bool GetKeyDown(KeyCode key)
+        {
+            if (this.input == null)
+            {
                 this.input = new InputWrapper();
             }
 
             return this.input.GetKeyDown(key);
         }
 
-        void Update() {
-            if (this.TimeSinceLastMatchSeconds >= this.MaximumBetweenSeconds && this.attempts.Count > 0) {
+        void Update()
+        {
+            this.TimeSinceLastMatchSeconds += Time.deltaTime;
+
+            if (this.TimeSinceLastMatchSeconds >= this.MaximumBetweenSeconds && this.attempts.Count > 0)
+            {
                 this.attempts.Clear();
 
                 return;
             }
 
-            this.TimeSinceLastMatchSeconds += Time.deltaTime;
             // TODO: ouch, is this really going through all KeyCodes every frame??
             // ----: find a faster way to get all keys down at the moment
-            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode))) {
-                if (this.GetKeyDown(key)) {
+            // ----: we can just test the next key or any other key
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (this.GetKeyDown(key))
+                {
                     this.TestMatches(key);
                 }
             }
         }
 
-        void TestMatches(KeyCode key) {
+        void TestMatches(KeyCode key)
+        {
             var index = 0;
-            while (index < this.attempts.Count) {
+            while (index < this.attempts.Count)
+            {
                 var attempt = this.attempts[index];
-                if (attempt.Try(key)) {
+                if (attempt.Try(key))
+                {
                     this.TimeSinceLastMatchSeconds = 0;
 
-                    if (attempt.IsMatched()) {
+                    if (attempt.IsMatched())
+                    {
                         attempt.SecretCode.Matched();
                         this.attempts.RemoveAt(index);
-                    } else {
+                    }
+                    else
+                    {
                         index++;
                     }
-                } else {
+                }
+                else
+                {
                     this.attempts.RemoveAt(index);
                 }
             }
 
-            foreach (SecretCode code in this.secretCodes) {
-                if (code.Letters.StartsWith(key.ToString())) {
+            foreach (SecretCode code in this.secretCodes)
+            {
+                if (code.Letters.StartsWith(key.ToString()))
+                {
                     var attempt = new Attempt(code);
                     attempt.Try(key);
                     this.attempts.Add(attempt);
