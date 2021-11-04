@@ -2,9 +2,11 @@
 using Eunomia;
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace EunomiaUnity
 {
+    // TODO: test with Current and Next swapping between using Url and VideoClip
     public class OverlappingVideos : MonoBehaviour
     {
         [SerializeField]
@@ -18,7 +20,13 @@ namespace EunomiaUnity
         private int currentIndex = 0;
 
         [SerializeField]
-        private float overlapDuration = 0.25f;
+        private float overlapDuration = 0.5f;
+
+        [SerializeField]
+        private bool crossfadeOverlap = true;
+
+        // [SerializeField]
+        // private bool allowLoopUntilNextPrepared = false;
 
         public float OverlapDuration
         {
@@ -60,6 +68,19 @@ namespace EunomiaUnity
                     return null;
                 }
                 return videos[currentIndex];
+            }
+        }
+
+        [ShowNativeProperty]
+        public VideoClip CurrentVideoClip
+        {
+            get
+            {
+                if (Current != null)
+                {
+                    return Current.VideoClip;
+                }
+                return null;
             }
         }
 
@@ -125,6 +146,19 @@ namespace EunomiaUnity
         }
 
         [ShowNativeProperty]
+        public VideoClip NextVideoClip
+        {
+            get
+            {
+                if (Next != null)
+                {
+                    return Next.VideoClip;
+                }
+                return null;
+            }
+        }
+
+        [ShowNativeProperty]
         public string NextUrl
         {
             get
@@ -174,6 +208,17 @@ namespace EunomiaUnity
             videos = new Video[] { first, second };
             videos.ForEach((video, index) =>
             {
+                if (crossfadeOverlap)
+                {
+                    video.fadeInDuration = overlapDuration;
+                    video.fadeOutDuration = overlapDuration;
+                }
+                else
+                {
+                    video.fadeInDuration = 0;
+                    video.fadeOutDuration = 0;
+                }
+                video.PlayOnAwake = false;
                 video.OnLoopPointReached += VideoLoopPointReached;
             });
         }
@@ -192,10 +237,17 @@ namespace EunomiaUnity
             {
                 Current.Stop();
 
-                if (String.IsNullOrWhiteSpace(Next.Url))
+                if (!Next.IsAssignedContent)
                 {
                     Next.Stop();
-                    Next.Url = Current.Url;
+                    if (Current.VideoClip != null)
+                    {
+                        Next.VideoClip = Current.VideoClip;
+                    }
+                    else
+                    {
+                        Next.Url = Current.Url;
+                    }
                 }
 
                 currentIndex = (currentIndex + 1).Wrap(videos.Length);
@@ -220,9 +272,16 @@ namespace EunomiaUnity
         // TODO: work out what happens if next finishes before current
         private void OverlapNext()
         {
-            if (String.IsNullOrWhiteSpace(Next.Url))
+            if (!Next.IsAssignedContent)
             {
-                Next.Url = Current.Url;
+                if (Current.VideoClip != null)
+                {
+                    Next.VideoClip = Current.VideoClip;
+                }
+                else
+                {
+                    Next.Url = Current.Url;
+                }
             }
 
             Next.Play();
@@ -241,9 +300,22 @@ namespace EunomiaUnity
             OnReachedOverlapPoint?.Invoke(this, new EventArgs());
         }
 
+        public void SetNextVideoClip(VideoClip videoClip)
+        {
+            if (!Current.IsAssignedContent)
+            {
+                Current.VideoClip = videoClip;
+                Current.Prepare();
+            }
+            else
+            {
+                Next.VideoClip = videoClip;
+            }
+        }
+
         public void SetNextUrl(string url)
         {
-            if (String.IsNullOrWhiteSpace(Current.Url))
+            if (!Current.IsAssignedContent)
             {
                 Current.Url = url;
                 Current.Prepare();
@@ -258,7 +330,7 @@ namespace EunomiaUnity
         {
             if (Current != null)
             {
-                if (String.IsNullOrWhiteSpace(Current.Url) == false)
+                if (Current.IsAssignedContent)
                 {
                     Current.Play();
                     if (overlapDuration > 0)
