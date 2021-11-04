@@ -154,10 +154,18 @@ namespace EunomiaUnity.UI
                 enabled = false;
                 return;
             }
+            else
+            {
+                videoPlayer.enabled = true;
+            }
             if (rawImage == null)
             {
                 enabled = false;
                 return;
+            }
+            else
+            {
+                rawImage.enabled = true;
             }
             if (renderTextureTemplate == null)
             {
