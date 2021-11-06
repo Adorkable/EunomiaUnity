@@ -1,5 +1,6 @@
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public class OnFinishedEvent : OnFinishedResponder
@@ -13,7 +14,7 @@ namespace EunomiaUnity
 
         public void DoInvokeEvent()
         {
-            OnFinished.Invoke(this, new EventArgs());
+            OnFinished.Invoke(this, EventArgs.Empty);
         }
     }
 }

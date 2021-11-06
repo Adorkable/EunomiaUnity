@@ -1,57 +1,59 @@
-
 using System;
-using System.Security.AccessControl;
 using UnityEngine.Events;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     [Serializable]
-    public class PublisherUnityEvent<EventData> : UnityEvent<EventData>
+    public class PublisherUnityEvent<TEventData> : UnityEvent<TEventData>
     {
-        public event EventHandler<EventData> onInvoke;
+        public event EventHandler<TEventData> OnInvoke;
 
-        public void InvokeAll(object sender, EventData eventData)
+        public void InvokeAll(object sender, TEventData eventData)
         {
-            onInvoke.Invoke(sender, eventData);
-            base.Invoke(eventData);
+            OnInvoke?.Invoke(sender, eventData);
+
+            Invoke(eventData);
         }
 
-        public void Subscribe(EventHandler<EventData> subscriber)
+        public void Subscribe(EventHandler<TEventData> subscriber)
         {
-            onInvoke += subscriber;
+            OnInvoke += subscriber;
         }
 
-        public void Unsubscribe(EventHandler<EventData> subscriber)
+        public void Unsubscribe(EventHandler<TEventData> subscriber)
         {
-            onInvoke -= subscriber;
+            OnInvoke -= subscriber;
         }
     }
 
     [Serializable]
     public class PublisherUnityEvent : UnityEvent
     {
-        public event EventHandler onInvoke;
+        public event EventHandler OnInvoke;
 
         public void InvokeAll(object sender, EventArgs eventArgs)
         {
-            onInvoke.Invoke(sender, eventArgs);
-            base.Invoke();
+            OnInvoke?.Invoke(sender, eventArgs);
+
+            Invoke();
         }
 
         public void InvokeAll(object sender)
         {
-            onInvoke.Invoke(sender, EventArgs.Empty);
-            base.Invoke();
+            OnInvoke?.Invoke(sender, EventArgs.Empty);
+
+            Invoke();
         }
 
         public void Subscribe(EventHandler subscriber)
         {
-            onInvoke += subscriber;
+            OnInvoke += subscriber;
         }
 
         public void Unsubscribe(EventHandler subscriber)
         {
-            onInvoke -= subscriber;
+            OnInvoke -= subscriber;
         }
     }
 }

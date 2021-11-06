@@ -1,18 +1,18 @@
 using System.Linq;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
-
     abstract public class OnFinishedResponder : MonoBehaviour
     {
         // TODO: support any components finished
         [Tooltip("All Components that must be finished")]
         public Component[] WaitToFinish;
 
-        void Update()
+        private void Update()
         {
-            bool allFinished = WaitToFinish.Aggregate(true, (accumulated, component) =>
+            var allFinished = WaitToFinish.Aggregate(true, (accumulated, component) =>
             {
                 if (accumulated == false)
                 {
@@ -27,38 +27,39 @@ namespace EunomiaUnity
             }
         }
 
-        bool IsFinished(Component component)
+        private bool IsFinished(Component component)
         {
             switch (component)
             {
-                case OnFinished onFinished:
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                case IOnFinished onFinished:
                     return this.IsFinished(onFinished);
 
-                case ParticleSystem particleSystem:
-                    return this.IsFinished(particleSystem);
+                case ParticleSystem testParticleSystem:
+                    return this.IsFinished(testParticleSystem);
 
-                case AudioSource audioSource:
-                    return this.IsFinished(audioSource);
+                case AudioSource testAudioSource:
+                    return this.IsFinished(testAudioSource);
 
                 default:
-                    Debug.LogWarning("Unhandled component type: " + component, this);
+                    Debug.LogWarning($"Unhandled component type: {component}", this);
                     return true;
             }
         }
 
-        bool IsFinished(OnFinished onFinished)
+        private bool IsFinished(IOnFinished onFinished)
         {
             return onFinished.IsFinished();
         }
 
-        bool IsFinished(ParticleSystem particleSystem)
+        private bool IsFinished(ParticleSystem test)
         {
-            return particleSystem.isStopped;
+            return test.isStopped;
         }
 
-        bool IsFinished(AudioSource audioSource)
+        private bool IsFinished(AudioSource test)
         {
-            return !audioSource.isPlaying;
+            return !test.isPlaying;
         }
 
         abstract protected void DoResponse();

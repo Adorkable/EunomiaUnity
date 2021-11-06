@@ -2,13 +2,15 @@ using System;
 using System.IO;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class RenderTextureExtensions_WriteToDisk
     {
         // TODO: autodetecting encoder from extension WriteToDisk function
 
-        public static void WriteToDisk(this RenderTexture renderTexture, string fileName, Func<Texture2D, byte[]> encoder, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        public static void WriteToDisk(this RenderTexture renderTexture, string fileName,
+            Func<Texture2D, byte[]> encoder, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
         {
             var frame = new Texture2D(renderTexture.width, renderTexture.height, fileTextureFormat, false);
 
@@ -21,40 +23,50 @@ namespace EunomiaUnity
             File.WriteAllBytes(fileName, bytes);
         }
 
-        public static void WritePNGToDisk(this RenderTexture renderTexture, string fileName, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        public static void WritePNGToDisk(this RenderTexture renderTexture, string fileName,
+            TextureFormat fileTextureFormat = TextureFormat.RGBA32)
         {
-            WriteToDisk(renderTexture, fileName, (Texture2D texture) => texture.EncodeToPNG(), fileTextureFormat);
+            WriteToDisk(renderTexture, fileName, (texture) => texture.EncodeToPNG(), fileTextureFormat);
         }
 
-        public static string WritePNGToTemporaryDisk(this RenderTexture renderTexture, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        private static string WriteToTemporaryDiskSavePath(this RenderTexture renderTexture, string extension)
         {
-            var savePath = $"{Application.temporaryCachePath}/RenderTexture-{renderTexture.GetInstanceID()}_{DateTime.Now.ToFileTimeUtc()}.png";
+            return
+                $"{Application.temporaryCachePath}/RenderTexture-{renderTexture.GetInstanceID()}_{DateTime.Now.ToFileTimeUtc()}.{extension}";
+        }
+
+        public static string WritePNGToTemporaryDisk(this RenderTexture renderTexture,
+            TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        {
+            var savePath = renderTexture.WriteToTemporaryDiskSavePath("png");
             WritePNGToDisk(renderTexture, savePath, fileTextureFormat);
             return savePath;
         }
 
-        public static void WriteTGAToDisk(this RenderTexture renderTexture, string fileName, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        public static void WriteTGAToDisk(this RenderTexture renderTexture, string fileName,
+            TextureFormat fileTextureFormat = TextureFormat.RGBA32)
         {
-            WriteToDisk(renderTexture, fileName, (Texture2D texture) => texture.EncodeToTGA(), fileTextureFormat);
-
+            WriteToDisk(renderTexture, fileName, texture => texture.EncodeToTGA(), fileTextureFormat);
         }
 
-        public static string WriteTGAToTemporaryDisk(this RenderTexture renderTexture, TextureFormat fileTextureFormat = TextureFormat.RGBA32)
+        public static string WriteTGAToTemporaryDisk(this RenderTexture renderTexture,
+            TextureFormat fileTextureFormat = TextureFormat.RGBA32)
         {
-            var savePath = $"{Application.temporaryCachePath}/RenderTexture-{renderTexture.GetInstanceID()}_{DateTime.Now.ToFileTimeUtc()}.tga";
+            var savePath = renderTexture.WriteToTemporaryDiskSavePath("tga");
             WriteTGAToDisk(renderTexture, savePath, fileTextureFormat);
             return savePath;
         }
 
-        public static void WriteJPGToDisk(this RenderTexture renderTexture, string fileName, TextureFormat fileTextureFormat = TextureFormat.RGB24)
+        public static void WriteJPGToDisk(this RenderTexture renderTexture, string fileName,
+            TextureFormat fileTextureFormat = TextureFormat.RGB24)
         {
-            WriteToDisk(renderTexture, fileName, (Texture2D texture) => texture.EncodeToJPG(), fileTextureFormat);
-
+            WriteToDisk(renderTexture, fileName, texture => texture.EncodeToJPG(), fileTextureFormat);
         }
 
-        public static string WriteJPGToTemporaryDisk(this RenderTexture renderTexture, TextureFormat fileTextureFormat = TextureFormat.RGB24)
+        public static string WriteJPGToTemporaryDisk(this RenderTexture renderTexture,
+            TextureFormat fileTextureFormat = TextureFormat.RGB24)
         {
-            var savePath = $"{Application.temporaryCachePath}/RenderTexture-{renderTexture.GetInstanceID()}_{DateTime.Now.ToFileTimeUtc()}.jpg";
+            var savePath = renderTexture.WriteToTemporaryDiskSavePath("jpg");
             WriteJPGToDisk(renderTexture, savePath, fileTextureFormat);
             return savePath;
         }
@@ -72,9 +84,10 @@ namespace EunomiaUnity
             Clear(renderTexture, true, true, clearColor);
         }
 
-        public static void Clear(this RenderTexture renderTexture, bool enableClearColor, bool enableClearDepth, Color clearColor, float clearDepth = 1.0f)
+        public static void Clear(this RenderTexture renderTexture, bool enableClearColor, bool enableClearDepth,
+            Color clearColor, float clearDepth = 1.0f)
         {
-            RenderTexture previous = RenderTexture.active;
+            var previous = RenderTexture.active;
 
             RenderTexture.active = renderTexture;
             GL.Clear(enableClearDepth, enableClearColor, clearColor, clearDepth);

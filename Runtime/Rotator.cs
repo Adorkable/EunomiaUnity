@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public class Rotator : MonoBehaviour
     {
         public Vector3 degreesPerSecond;
 
-        void Update()
+        private void Update()
         {
-            transform.eulerAngles = transform.eulerAngles + degreesPerSecond * Time.deltaTime;
+            transform.eulerAngles += degreesPerSecond * Time.deltaTime;
         }
     }
 }

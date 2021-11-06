@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     // TODO: combine with OnFinished for On...
@@ -11,10 +12,10 @@ namespace EunomiaUnity
             Start,
             Update
         }
-        [SerializeField]
-        private When when;
 
-        void Awake()
+        [SerializeField] private When when;
+
+        private void Awake()
         {
             if (when == When.Awake)
             {
@@ -22,7 +23,7 @@ namespace EunomiaUnity
             }
         }
 
-        void Start()
+        private void Start()
         {
             if (when == When.Start)
             {
@@ -30,7 +31,7 @@ namespace EunomiaUnity
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (when == When.Update)
             {

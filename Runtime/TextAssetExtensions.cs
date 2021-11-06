@@ -1,12 +1,16 @@
-using System.Collections.Generic;
 using System.Linq;
+using Eunomia;
 using UnityEngine;
 
-namespace EunomiaUnity {
-    public static class TextAssetExtensions {
-        public static Eunomia.WordList ToWordList(this TextAsset from) {
-            List<string> allWords = from.text.Split('\n').ToList();
-            return new Eunomia.WordList(allWords);
+// ReSharper disable once CheckNamespace
+namespace EunomiaUnity
+{
+    public static class TextAssetExtensions
+    {
+        public static WordList ToWordList(this TextAsset from)
+        {
+            var allWords = from.text.Split('\n').ToList();
+            return new WordList(allWords);
         }
     }
 }

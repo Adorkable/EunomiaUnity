@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class ApplicationExtensions
@@ -9,11 +10,11 @@ namespace EunomiaUnity
             get
             {
 #if UNITY_EDITOR
-                return Application.dataPath + "/../";
+                return $"{Application.dataPath}/../";
 #elif UNITY_STANDALONE_WIN
-            return Application.dataPath + "/../";
+                return $"{Application.dataPath}/../";
 #elif UNITY_STANDALONE_OSX
-            return Application.dataPath + "/../../";
+                return $"{Application.dataPath}/../../";
 #endif
             }
         }

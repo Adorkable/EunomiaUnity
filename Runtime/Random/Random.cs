@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eunomia;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     [Serializable]
@@ -14,6 +14,21 @@ namespace EunomiaUnity
         public Random(IRandom random)
         {
             this.random = random;
+        }
+
+        int IRandom.Next()
+        {
+            return random.Next();
+        }
+
+        int IRandom.Next(int maxValue)
+        {
+            return random.Next(maxValue);
+        }
+
+        int IRandom.Next(int minValue, int maxValue)
+        {
+            return random.Next(minValue, maxValue);
         }
 
         public float Next()
@@ -62,21 +77,6 @@ namespace EunomiaUnity
         public ItemType RandomElement<ItemType>(IEnumerable<ItemType> enumerable)
         {
             return enumerable.RandomElement(this);
-        }
-
-        int IRandom.Next()
-        {
-            return random.Next();
-        }
-
-        int IRandom.Next(int maxValue)
-        {
-            return random.Next(maxValue);
-        }
-
-        int IRandom.Next(int minValue, int maxValue)
-        {
-            return random.Next(minValue, maxValue);
         }
     }
 }

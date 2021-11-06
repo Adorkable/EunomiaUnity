@@ -1,10 +1,11 @@
 using Eunomia;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public class UnityEngineRandomWrapper : IRandom
     {
-        private UnityEngine.Random.State state;
+        private readonly UnityEngine.Random.State state;
 
         public UnityEngineRandomWrapper(UnityEngine.Random.State state)
         {
@@ -15,6 +16,7 @@ namespace EunomiaUnity
         {
             var previousState = UnityEngine.Random.state;
 
+            UnityEngine.Random.state = state;
             var result = UnityEngine.Random.Range(0, int.MaxValue);
 
             UnityEngine.Random.state = previousState;

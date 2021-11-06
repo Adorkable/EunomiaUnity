@@ -2,16 +2,16 @@
 using Eunomia;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public abstract class TimedMultiTest<TContent> : MonoBehaviour
     {
-        protected abstract TContent[] Content { get; }
-
         public float testDuration = 5;
-        private int testIndex = 0;
-        private float testStartTime = 0;
-        private bool transitioning = false;
+        private int testIndex;
+        private float testStartTime;
+        private bool transitioning;
+        protected abstract TContent[] Content { get; }
 
         protected virtual void Awake()
         {
@@ -21,10 +21,11 @@ namespace EunomiaUnity
                 enabled = false;
                 return;
             }
+
             SwitchToTest(0);
         }
 
-        void Update()
+        private void Update()
         {
             // TODO: only do when visible
             if (testStartTime + testDuration < Time.time)
@@ -37,12 +38,14 @@ namespace EunomiaUnity
         {
             lock (this)
             {
-                if (transitioning == true)
+                if (transitioning)
                 {
                     return;
                 }
+
                 transitioning = true;
             }
+
             testIndex = index.Wrap(Content.Length);
             testStartTime = Time.time;
 

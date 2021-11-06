@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Eunomia;
-using EunomiaUnity;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
     [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(RawImage))]
     public class Video : MonoBehaviour
     {
-        private VideoPlayer videoPlayer;
-        private RawImage rawImage;
-        [SerializeField]
-        private RenderTexture renderTextureTemplate;
-        private RenderTexture renderTexture;
+        [SerializeField] private RenderTexture renderTextureTemplate;
 
-        [SerializeField]
-        private Texture2D editorPreview;
+        [SerializeField] private Texture2D editorPreview;
+
+        private readonly List<UniTaskCompletionSource<Video>> onPrepared = new List<UniTaskCompletionSource<Video>>();
+
+        // ReSharper disable once Unity.RedundantSerializeFieldAttribute - not obvious on first glance
+        [SerializeField, Foldout("Debug"), AllowNesting, ReadOnly]
+        private List<INotification> notifications;
+
+        private RawImage rawImage;
+        private RenderTexture renderTexture;
+        private VideoPlayer videoPlayer;
 
         [ShowNativeProperty]
         public bool IsLooping
@@ -31,12 +36,10 @@ namespace EunomiaUnity.UI
                 {
                     return videoPlayer.isLooping;
                 }
+
                 return false;
             }
-            set
-            {
-                videoPlayer.isLooping = value;
-            }
+            set { videoPlayer.isLooping = value; }
         }
 
         [ShowNativeProperty]
@@ -48,6 +51,7 @@ namespace EunomiaUnity.UI
                 {
                     return videoPlayer.isPlaying;
                 }
+
                 return false;
             }
         }
@@ -61,12 +65,10 @@ namespace EunomiaUnity.UI
                 {
                     return videoPlayer.url;
                 }
+
                 return null;
             }
-            set
-            {
-                _ = SetUrl(value);
-            }
+            set { _ = SetUrl(value); }
         }
 
         [ShowNativeProperty]
@@ -78,6 +80,7 @@ namespace EunomiaUnity.UI
                 {
                     return videoPlayer.length;
                 }
+
                 return 0;
             }
         }
@@ -91,6 +94,7 @@ namespace EunomiaUnity.UI
                 {
                     return videoPlayer.time;
                 }
+
                 return 0;
             }
         }
@@ -100,49 +104,20 @@ namespace EunomiaUnity.UI
         {
             get
             {
-                if (videoPlayer == null || videoPlayer.texture == null)
+                if (videoPlayer == null)
                 {
                     return new Vector2Int(0, 0);
                 }
 
-                return new Vector2Int(videoPlayer.texture.width, videoPlayer.texture.height);
+                var texture = videoPlayer.texture;
+                if (texture == null)
+                {
+                    return new Vector2Int(0, 0);
+                }
+
+                return new Vector2Int(texture.width, texture.height);
             }
         }
-
-        private List<UniTaskCompletionSource<Video>> onPrepared = new List<UniTaskCompletionSource<Video>>();
-
-        public event EventHandler OnPrepared;
-        public event EventHandler OnStarted;
-        public event EventHandler OnLoopPointReached;
-
-        private interface INotification
-        {
-            Action<Video> perform { get; }
-        }
-        [Serializable]
-        private struct AtPercentNotification : INotification
-        {
-            public Action<Video> perform { get; set; }
-            public float atPercent;
-
-            public override string ToString()
-            {
-                return $"At percent: {atPercent}%";
-            }
-        }
-        [Serializable]
-        private struct AtTimeFromEndNotification : INotification
-        {
-            public Action<Video> perform { get; set; }
-            public float atTimeFromEnd;
-
-            public override string ToString()
-            {
-                return $"At time from end: {atTimeFromEnd} seconds";
-            }
-        }
-        [Foldout("Debug"), AllowNesting, NaughtyAttributes.ReadOnly, SerializeField]
-        private List<INotification> notifications;
 
         protected void Awake()
         {
@@ -158,6 +133,7 @@ namespace EunomiaUnity.UI
             {
                 videoPlayer.enabled = true;
             }
+
             if (rawImage == null)
             {
                 enabled = false;
@@ -167,6 +143,7 @@ namespace EunomiaUnity.UI
             {
                 rawImage.enabled = true;
             }
+
             if (renderTextureTemplate == null)
             {
                 this.LogMissingRequiredReference(typeof(VideoPlayer));
@@ -174,7 +151,7 @@ namespace EunomiaUnity.UI
                 return;
             }
 
-            var rawImageTransform = rawImage.GetComponent<RectTransform>();
+            // var rawImageTransform = rawImage.GetComponent<RectTransform>();
             renderTexture = new RenderTexture(renderTextureTemplate);
             renderTexture.name = this.name;
             renderTexture.Create();
@@ -192,7 +169,24 @@ namespace EunomiaUnity.UI
             notifications = new List<INotification>();
         }
 
-        void OnDestroy()
+        private void Update()
+        {
+            UpdateNotifications();
+        }
+
+        private void OnEnable()
+        {
+            rawImage.enabled = true;
+            Play();
+        }
+
+        private void OnDisable()
+        {
+            rawImage.enabled = false;
+            Pause();
+        }
+
+        private void OnDestroy()
         {
             videoPlayer.prepareCompleted -= VideoPlayerPrepareCompleted;
             videoPlayer.started -= VideoPlayerStarted;
@@ -200,17 +194,20 @@ namespace EunomiaUnity.UI
             videoPlayer.errorReceived -= VideoPlayerErrorRecieved;
         }
 
-        void OnEnable()
+        private void OnValidate()
         {
-            rawImage.enabled = true;
-            Play();
+#if UNITY_EDITOR
+            var rawImageComponent = GetComponent<RawImage>();
+            if (rawImageComponent != null)
+            {
+                rawImageComponent.texture = editorPreview;
+            }
+#endif
         }
 
-        void OnDisable()
-        {
-            rawImage.enabled = false;
-            Pause();
-        }
+        public event EventHandler OnPrepared;
+        public event EventHandler OnStarted;
+        public event EventHandler OnLoopPointReached;
 
         private void VideoPlayerPrepareCompleted(VideoPlayer source)
         {
@@ -220,21 +217,22 @@ namespace EunomiaUnity.UI
                 taskCompletionSources = onPrepared.Copy();
                 onPrepared.Clear();
             }
+
             taskCompletionSources.ForEach((taskCompletionSource, index) =>
             {
                 taskCompletionSource.TrySetResult(this);
             });
-            OnPrepared?.Invoke(this, new EventArgs());
+            OnPrepared?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            OnStarted?.Invoke(this, new EventArgs());
+            OnStarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerLoopPointReached(VideoPlayer source)
         {
-            OnLoopPointReached?.Invoke(this, new EventArgs());
+            OnLoopPointReached?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerErrorRecieved(VideoPlayer source, string error)
@@ -281,6 +279,7 @@ namespace EunomiaUnity.UI
                 {
                     onPrepared.Add(prepareTask);
                 }
+
                 return prepareTask.Task;
             }
             else
@@ -308,20 +307,20 @@ namespace EunomiaUnity.UI
             });
         }
 
-        void PerformAndRemove(INotification perform)
+        private void PerformAndRemove(INotification perform)
         {
             perform.perform.Invoke(this);
             notifications.Remove(perform);
         }
 
-        void UpdateNotifications()
+        private void UpdateNotifications()
         {
             if (videoPlayer.length == 0)
             {
                 return;
             }
 
-            int index = 0;
+            var index = 0;
             while (index < notifications.Count)
             {
                 var notification = notifications[index];
@@ -333,6 +332,7 @@ namespace EunomiaUnity.UI
                             PerformAndRemove(atPercent);
                             continue;
                         }
+
                         break;
                     case AtTimeFromEndNotification atTimeFromEnd:
                         if (atTimeFromEnd.atTimeFromEnd >= videoPlayer.length - videoPlayer.time)
@@ -340,25 +340,25 @@ namespace EunomiaUnity.UI
                             PerformAndRemove(atTimeFromEnd);
                             continue;
                         }
+
                         break;
                 }
+
                 index++;
             }
         }
 
-        void Update()
-        {
-            UpdateNotifications();
-        }
-
         [Button]
-        void SaveCurrentFrameToDisk()
+        private void SaveCurrentFrameToDisk()
         {
             if (rawImage == null || rawImage.texture == null || videoPlayer == null)
             {
-                Debug.LogWarning("Raw Image, Raw Image's texture or Video Player not found, unable to Save Current Frame To Disk", this);
+                Debug.LogWarning(
+                    "Raw Image, Raw Image's texture or Video Player not found, unable to Save Current Frame To Disk",
+                    this);
                 return;
             }
+
             var rawImageTexture = (RenderTexture)rawImage.texture;
             if (rawImageTexture == null)
             {
@@ -366,7 +366,8 @@ namespace EunomiaUnity.UI
                 return;
             }
 
-            var savePath = $"{Application.temporaryCachePath}/Video_{gameObject.name}-{gameObject.GetInstanceID()}_frame-{videoPlayer.frame}.png";
+            var savePath =
+                $"{Application.temporaryCachePath}/Video_{gameObject.name}-{gameObject.GetInstanceID()}_frame-{videoPlayer.frame}.png";
             rawImageTexture.WritePNGToDisk(savePath);
             Debug.Log($"Current Frame saved to '{savePath}'", this);
         }
@@ -382,15 +383,35 @@ namespace EunomiaUnity.UI
             renderTexture = resized;
         }
 
-        void OnValidate()
+        private interface INotification
         {
-#if UNITY_EDITOR
-            var rawImage = GetComponent<RawImage>();
-            if (rawImage != null)
+            Action<Video> perform { get; }
+        }
+
+        [Serializable]
+        private struct AtPercentNotification : INotification
+        {
+            public float atPercent;
+            public Action<Video> perform { get; set; }
+
+            public override string ToString()
             {
-                rawImage.texture = editorPreview;
+                // ReSharper disable once HeapView.BoxingAllocation
+                return $"At percent: {atPercent}%";
             }
-#endif
+        }
+
+        [Serializable]
+        private struct AtTimeFromEndNotification : INotification
+        {
+            public float atTimeFromEnd;
+            public Action<Video> perform { get; set; }
+
+            public override string ToString()
+            {
+                // ReSharper disable once HeapView.BoxingAllocation
+                return $"At time from end: {atTimeFromEnd} seconds";
+            }
         }
     }
 }

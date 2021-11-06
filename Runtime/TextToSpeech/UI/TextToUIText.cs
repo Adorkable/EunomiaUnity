@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using EunomiaUnity;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity.TextToSpeech.UI
 {
     public class TextToUIText : TextToSpeech
     {
-        [SerializeField]
-        private Text text;
+        [SerializeField] private Text text;
 
-        [SerializeField]
-        private bool useStoppedText = true;
+        [SerializeField] private bool useStoppedText = true;
 
-        [SerializeField]
-        private string stoppedText = "<stopped>";
+        [SerializeField] private string stoppedText = "<stopped>";
 
-        void Awake()
+        private void Awake()
         {
             if (text == null)
             {
@@ -33,6 +27,7 @@ namespace EunomiaUnity.TextToSpeech.UI
             {
                 return;
             }
+
             text.text = speak;
         }
 
@@ -42,10 +37,12 @@ namespace EunomiaUnity.TextToSpeech.UI
             {
                 return;
             }
+
             if (text == null)
             {
                 return;
             }
+
             text.text = stoppedText;
         }
     }

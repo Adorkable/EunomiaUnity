@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class Texture2DUtility
@@ -15,16 +16,15 @@ namespace EunomiaUnity
 
                 if (webRequest.isNetworkError)
                 {
-                    throw new System.Exception(webRequest.error);
+                    throw new Exception(webRequest.error);
                 }
-                else if (webRequest.isHttpError)
+
+                if (webRequest.isHttpError)
                 {
-                    throw new System.Exception(webRequest.error);
+                    throw new Exception(webRequest.error);
                 }
-                else
-                {
-                    return DownloadHandlerTexture.GetContent(webRequest);
-                }
+
+                return DownloadHandlerTexture.GetContent(webRequest);
             }
         }
 
@@ -34,9 +34,9 @@ namespace EunomiaUnity
             {
                 return Load(UnityWebRequestTexture.GetTexture(url));
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
-                throw new System.Exception($"Network error for request '{url}'): {exception.Message}");
+                throw new Exception($"Network error for request '{url}'): {exception.Message}");
             }
         }
 
@@ -46,9 +46,9 @@ namespace EunomiaUnity
             {
                 return Load(UnityWebRequestTexture.GetTexture(uri));
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
-                throw new System.Exception($"Network error for request '{uri}'): {exception.Message}");
+                throw new Exception($"Network error for request '{uri}'): {exception.Message}");
             }
         }
 
@@ -58,20 +58,21 @@ namespace EunomiaUnity
             {
                 return Load(UnityWebRequestTexture.GetTexture(url, nonReadable));
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
-                throw new System.Exception($"Network error for request '{url}'): {exception.Message}");
+                throw new Exception($"Network error for request '{url}'): {exception.Message}");
             }
         }
+
         public static UniTask<Texture2D> LoadUrl(Uri uri, bool nonReadable)
         {
             try
             {
                 return Load(UnityWebRequestTexture.GetTexture(uri, nonReadable));
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
-                throw new System.Exception($"Network error for request '{uri}'): {exception.Message}");
+                throw new Exception($"Network error for request '{uri}'): {exception.Message}");
             }
         }
     }

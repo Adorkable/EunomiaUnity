@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Eunomia;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     // Based on: https://www.lucidumstudio.com/home/2017/12/5/lucidum-studio-async-code-execution-in-unity
@@ -12,14 +12,8 @@ namespace EunomiaUnity
 
         public Action<Exception> logUnhandledExceptions
         {
-            get
-            {
-                return mainThreadDispatcher.logUnhandledExceptions;
-            }
-            set
-            {
-                mainThreadDispatcher.logUnhandledExceptions = value;
-            }
+            get { return mainThreadDispatcher.logUnhandledExceptions; }
+            set { mainThreadDispatcher.logUnhandledExceptions = value; }
         }
 
         protected void Awake()
@@ -27,14 +21,14 @@ namespace EunomiaUnity
             mainThreadDispatcher = new Dispatcher();
         }
 
-        public void Invoke(Action fn)
-        {
-            mainThreadDispatcher.Invoke(fn);
-        }
-
         private void Update()
         {
             mainThreadDispatcher.InvokePending();
+        }
+
+        public void Invoke(Action fn)
+        {
+            mainThreadDispatcher.Invoke(fn);
         }
     }
 }

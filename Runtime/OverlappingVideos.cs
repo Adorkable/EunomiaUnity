@@ -4,46 +4,32 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Video;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     // TODO: test with Current and Next swapping between using Url and VideoClip
     public class OverlappingVideos : MonoBehaviour
     {
-        [SerializeField]
-        private Video first;
+        [SerializeField] private Video first;
 
-        [SerializeField]
-        private Video second;
+        [SerializeField] private Video second;
+
+        [SerializeField] private float overlapDuration = 0.5f;
+
+        [SerializeField] private bool crossfadeOverlap = true;
+
+        private int currentIndex;
 
         private Video[] videos;
-
-        private int currentIndex = 0;
-
-        [SerializeField]
-        private float overlapDuration = 0.5f;
-
-        [SerializeField]
-        private bool crossfadeOverlap = true;
 
         // [SerializeField]
         // private bool allowLoopUntilNextPrepared = false;
 
         public float OverlapDuration
         {
-            get
-            {
-                return overlapDuration;
-            }
-            set
-            {
-                overlapDuration = value;
-            }
+            get => overlapDuration;
+            set => overlapDuration = value;
         }
-
-        [SerializeField]
-        public event EventHandler OnReachedLoopPoint;
-        [SerializeField]
-        public event EventHandler OnReachedOverlapPoint;
 
         [ShowNativeProperty]
         public bool IsPlaying
@@ -54,6 +40,7 @@ namespace EunomiaUnity
                 {
                     return Current.IsPlaying;
                 }
+
                 return false;
             }
         }
@@ -67,6 +54,7 @@ namespace EunomiaUnity
                 {
                     return null;
                 }
+
                 return videos[currentIndex];
             }
         }
@@ -80,6 +68,7 @@ namespace EunomiaUnity
                 {
                     return Current.VideoClip;
                 }
+
                 return null;
             }
         }
@@ -93,6 +82,7 @@ namespace EunomiaUnity
                 {
                     return Current.Url;
                 }
+
                 return null;
             }
         }
@@ -106,6 +96,7 @@ namespace EunomiaUnity
                 {
                     return Current.Duration;
                 }
+
                 return 0;
             }
         }
@@ -119,6 +110,7 @@ namespace EunomiaUnity
                 {
                     return Current.Time;
                 }
+
                 return 0;
             }
         }
@@ -132,6 +124,7 @@ namespace EunomiaUnity
                 {
                     return Next.Size;
                 }
+
                 return new Vector2Int(0, 0);
             }
         }
@@ -139,10 +132,7 @@ namespace EunomiaUnity
         [ShowNativeProperty]
         private Video Next
         {
-            get
-            {
-                return videos[(currentIndex + 1).Wrap(videos.Length)];
-            }
+            get { return videos[(currentIndex + 1).Wrap(videos.Length)]; }
         }
 
         [ShowNativeProperty]
@@ -154,6 +144,7 @@ namespace EunomiaUnity
                 {
                     return Next.VideoClip;
                 }
+
                 return null;
             }
         }
@@ -167,6 +158,7 @@ namespace EunomiaUnity
                 {
                     return Next.Url;
                 }
+
                 return null;
             }
         }
@@ -180,9 +172,11 @@ namespace EunomiaUnity
                 {
                     return Next.Duration;
                 }
+
                 return 0;
             }
         }
+
         [ShowNativeProperty]
         public Vector2Int NextSize
         {
@@ -192,6 +186,7 @@ namespace EunomiaUnity
                 {
                     return Next.Size;
                 }
+
                 return new Vector2Int(0, 0);
             }
         }
@@ -205,7 +200,7 @@ namespace EunomiaUnity
                 return;
             }
 
-            videos = new Video[] { first, second };
+            videos = new[] {first, second};
             videos.ForEach((video, index) =>
             {
                 if (crossfadeOverlap)
@@ -218,18 +213,26 @@ namespace EunomiaUnity
                     video.fadeInDuration = 0;
                     video.fadeOutDuration = 0;
                 }
+
                 video.PlayOnAwake = false;
                 video.OnLoopPointReached += VideoLoopPointReached;
             });
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
-            videos.ForEach((video, index) =>
-            {
-                video.OnLoopPointReached -= VideoLoopPointReached;
-            });
+            videos.ForEach((video, index) => { video.OnLoopPointReached -= VideoLoopPointReached; });
         }
+
+        private void OnValidate()
+        {
+#if UNITY_EDITOR
+            videos = new[] {first, second};
+#endif
+        }
+
+        public event EventHandler OnReachedLoopPoint;
+        public event EventHandler OnReachedOverlapPoint;
 
         private void VideoLoopPointReached(object video, EventArgs args)
         {
@@ -297,7 +300,8 @@ namespace EunomiaUnity
             {
                 OverlapNext();
             }
-            OnReachedOverlapPoint?.Invoke(this, new EventArgs());
+
+            OnReachedOverlapPoint?.Invoke(this, EventArgs.Empty);
         }
 
         public void SetNextVideoClip(VideoClip videoClip)
@@ -353,13 +357,6 @@ namespace EunomiaUnity
         public void Stop()
         {
             Current.Stop();
-        }
-
-        void OnValidate()
-        {
-#if UNITY_EDITOR
-            videos = new Video[] { first, second };
-#endif
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     // TODO: combine with OnFinished for On...
@@ -10,6 +11,7 @@ namespace EunomiaUnity
             Awake,
             Start
         };
+
         public When initializeWhen = When.Awake;
 
         private void Awake()

@@ -1,14 +1,16 @@
 // based on https://forum.unity.com/threads/easy-speech-synthesis-on-a-mac.524216/
 
 using System;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity.TextToSpeech
 {
     /// <summary>
-    /// macOS Text to Speech interface<br/>
-    /// Note: Goes without saying that this is only supported on macOS 😚
+    ///     macOS Text to Speech interface<br />
+    ///     Note: Goes without saying that this is only supported on macOS 😚
     /// </summary>
     public class TextToMacOSSay : TextToSpeech
     {
@@ -78,15 +80,13 @@ namespace EunomiaUnity.TextToSpeech
             Yuna, // ko_KR    # 안녕하세요. 제 이름은 Yuna입니다. 저는 한국어 음성입니다.
             Zarvox, //en_US    # That looks like a peaceful planet.
             Zosia, //pl_PL    # Witaj. Mam na imię Zosia, jestem głosem kobiecym dla języka polskiego.
-            Zuzana, //cs_CZ    # Dobrý den, jmenuji se Zuzana. Jsem český hlas.
+            Zuzana //cs_CZ    # Dobrý den, jmenuji se Zuzana. Jsem český hlas.
         }
 #if !(UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
 #pragma warning disable CS0414 // Unused warning on !OSX
 #endif
-        [SerializeField]
-        private Voice voice = Voice.Samantha;
-        [SerializeField]
-        private int outputChannel = 48;
+        [SerializeField] private Voice voice = Voice.Samantha;
+        [SerializeField] private int outputChannel = 48;
 #if !(UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
 #pragma warning restore CS0414
 #endif
@@ -94,44 +94,53 @@ namespace EunomiaUnity.TextToSpeech
         public UnityEvent OnStartedSpeaking;
         public UnityEvent OnStoppedSpeaking;
 
-        private System.Diagnostics.Process process;
+        private Process process;
         private bool wasSpeaking;
 
         public override void Speak(string text)
         {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 
-        string cmdArgs = string.Format("-a {2} -v {0} \"{1}\"", VoiceToString(voice), text.Replace("\"", ","), outputChannel);
-        process = System.Diagnostics.Process.Start("/usr/bin/say", cmdArgs);
+            var cmdArgs = string.Format("-a {2} -v {0} \"{1}\"", VoiceToString(voice), text.Replace("\"", ","),
+                outputChannel);
+            process = Process.Start("/usr/bin/say", cmdArgs);
 #endif
         }
 
         public override void StopSpeaking()
         {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        if (process == null)
-        {
-            return;
-        }
-        process.Kill();
-        process = null;
+            if (process == null)
+            {
+                return;
+            }
+
+            process.Kill();
+            process = null;
 #endif
         }
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-    void Update()
-    {
-        bool isSpeaking = (process != null && !process.HasExited);
-        if (isSpeaking != wasSpeaking)
+        private void Update()
         {
-            if (isSpeaking) OnStartedSpeaking.Invoke();
-            else OnStoppedSpeaking.Invoke();
-            wasSpeaking = isSpeaking;
+            var isSpeaking = process != null && !process.HasExited;
+            if (isSpeaking != wasSpeaking)
+            {
+                if (isSpeaking)
+                {
+                    OnStartedSpeaking.Invoke();
+                }
+                else
+                {
+                    OnStoppedSpeaking.Invoke();
+                }
+
+                wasSpeaking = isSpeaking;
+            }
         }
-    }
 #endif
 
-        static string VoiceToString(Voice voice)
+        private static string VoiceToString(Voice voice)
         {
             switch (voice)
             {

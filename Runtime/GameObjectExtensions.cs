@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class GameObjectExtensions
@@ -8,7 +9,7 @@ namespace EunomiaUnity
         {
             gameObject.layer = layer;
 
-            foreach (Transform transform in gameObject.GetComponentsInChildren<Transform>(true))
+            foreach (var transform in gameObject.GetComponentsInChildren<Transform>(true))
             {
                 transform.gameObject.layer = layer;
             }
@@ -16,7 +17,7 @@ namespace EunomiaUnity
 
         public static T AddComponent<T>(this GameObject gameObject, T template) where T : Component
         {
-            return gameObject.AddComponent<T>().CopyProperties<T>(template);
+            return gameObject.AddComponent<T>().CopyProperties(template);
         }
     }
 }

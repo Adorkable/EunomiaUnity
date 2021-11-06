@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class RectTransformExtensions
     {
         /// <summary>
-        /// Aligns `this` with provided `RectTransform` in provided `RectTransform`'s parent
+        ///     Aligns `this` with provided `RectTransform` in provided `RectTransform`'s parent
         /// </summary>
         /// <param name="rectTransform">`RectTranform` to align</param>
         /// <param name="alignWith">`RectTranform` to align to and whose parent is used</param>
@@ -22,8 +23,8 @@ namespace EunomiaUnity
         }
 
         /// <summary>
-        /// *Untested, do not use yet*
-        /// Aligns `this` with provided `RectTransform` and makes self a child of said `RectTransform`
+        ///     *Untested, do not use yet*
+        ///     Aligns `this` with provided `RectTransform` and makes self a child of said `RectTransform`
         /// </summary>
         /// <param name="rectTransform">`RectTransform` to align</param>
         /// <param name="alignWith">`RectTransform` to align to and who to make new parent</param>

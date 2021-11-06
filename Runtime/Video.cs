@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Eunomia;
-using EunomiaUnity;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Rendering;
 using UnityEngine.Video;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(Renderer))]
     public class Video : MonoBehaviour
     {
-        private VideoPlayer videoPlayer;
-
         [SerializeField, ShowIf("VideoPlayerIsRenderModeMaterialOverride")]
         public float fadeInDuration = 0.5f;
 
@@ -23,6 +21,14 @@ namespace EunomiaUnity
 
         [SerializeField, Dropdown("GetFadeMaterialParameterOptions"), ShowIf("VideoPlayerIsRenderModeMaterialOverride")]
         private string fadeMaterialParameter;
+
+        private readonly List<UniTaskCompletionSource<Video>> onPrepared = new List<UniTaskCompletionSource<Video>>();
+
+        // ReSharper disable once Unity.RedundantSerializeFieldAttribute - not obvious to me on first glance
+        [SerializeField, Foldout("Debug"), AllowNesting, ReadOnly]
+        private List<INotification> notifications;
+
+        private VideoPlayer videoPlayer;
 
         private bool VideoPlayerIsRenderModeMaterialOverride
         {
@@ -37,22 +43,6 @@ namespace EunomiaUnity
             }
         }
 
-        private DropdownList<string> GetFadeMaterialParameterOptions()
-        {
-            var renderer = this.GetComponent<Renderer>();
-            if (renderer == null)
-            {
-                return null;
-            }
-
-            var result = new DropdownList<string>();
-
-            renderer.GetSharedMaterialShaderProperties(UnityEngine.Rendering.ShaderPropertyType.Color)
-            .ForEach((parameterName) => result.Add(parameterName, parameterName));
-
-            return result;
-        }
-
         [ShowNativeProperty]
         public bool IsLooping
         {
@@ -62,12 +52,10 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.isLooping;
                 }
+
                 return false;
             }
-            set
-            {
-                videoPlayer.isLooping = value;
-            }
+            set { videoPlayer.isLooping = value; }
         }
 
         [ShowNativeProperty]
@@ -79,6 +67,7 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.isPlaying;
                 }
+
                 return false;
             }
         }
@@ -92,12 +81,10 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.clip;
                 }
+
                 return null;
             }
-            set
-            {
-                _ = SetVideoClip(value);
-            }
+            set { _ = SetVideoClip(value); }
         }
 
         [ShowNativeProperty]
@@ -109,12 +96,10 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.url;
                 }
+
                 return null;
             }
-            set
-            {
-                _ = SetUrl(value);
-            }
+            set { _ = SetUrl(value); }
         }
 
         [ShowNativeProperty]
@@ -126,6 +111,7 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.length;
                 }
+
                 return 0;
             }
         }
@@ -139,6 +125,7 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.time;
                 }
+
                 return 0;
             }
             set
@@ -160,7 +147,8 @@ namespace EunomiaUnity
                     return new Vector2Int(0, 0);
                 }
 
-                return new Vector2Int(videoPlayer.texture.width, videoPlayer.texture.height);
+                var texture = videoPlayer.texture;
+                return new Vector2Int(texture.width, texture.height);
             }
         }
 
@@ -173,6 +161,7 @@ namespace EunomiaUnity
                 {
                     return videoPlayer.playOnAwake;
                 }
+
                 return false;
             }
             set
@@ -197,45 +186,10 @@ namespace EunomiaUnity
             }
         }
 
-        private List<UniTaskCompletionSource<Video>> onPrepared = new List<UniTaskCompletionSource<Video>>();
-
-        public event EventHandler OnPrepared;
-        public event EventHandler OnStarted;
-        public event EventHandler OnLoopPointReached;
-
-        private interface INotification
-        {
-            Action<Video> perform { get; }
-        }
-        [Serializable]
-        private struct AtPercentNotification : INotification
-        {
-            public Action<Video> perform { get; set; }
-            public float atPercent;
-
-            public override string ToString()
-            {
-                return $"At percent: {atPercent}%";
-            }
-        }
-        [Serializable]
-        private struct AtTimeFromEndNotification : INotification
-        {
-            public Action<Video> perform { get; set; }
-            public float atTimeFromEnd;
-
-            public override string ToString()
-            {
-                return $"At time from end: {atTimeFromEnd} seconds";
-            }
-        }
-        [Foldout("Debug"), AllowNesting, NaughtyAttributes.ReadOnly, SerializeField]
-        private List<INotification> notifications;
-
         protected void Awake()
         {
             videoPlayer = this.RequireComponentInstance<VideoPlayer>();
-            var renderer = this.RequireComponentInstance<Renderer>();
+            var rendererComponent = this.RequireComponentInstance<Renderer>();
 
             if (videoPlayer == null)
             {
@@ -246,14 +200,15 @@ namespace EunomiaUnity
             {
                 videoPlayer.enabled = true;
             }
-            if (renderer == null)
+
+            if (rendererComponent == null)
             {
                 enabled = false;
                 return;
             }
             else
             {
-                renderer.enabled = true;
+                rendererComponent.enabled = true;
             }
 
             videoPlayer.prepareCompleted += VideoPlayerPrepareCompleted;
@@ -264,7 +219,34 @@ namespace EunomiaUnity
             notifications = new List<INotification>();
         }
 
-        void OnDestroy()
+        private void Update()
+        {
+            UpdateNotifications();
+            UpdateFade(); // TODO: elaborate insight in Notifications to be able to use it for fading in and fading out
+        }
+
+        private void OnEnable()
+        {
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
+            {
+                rendererComponent.enabled = true;
+            }
+
+            Play();
+        }
+
+        private void OnDisable()
+        {
+            Pause();
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
+            {
+                rendererComponent.enabled = false;
+            }
+        }
+
+        private void OnDestroy()
         {
             videoPlayer.prepareCompleted -= VideoPlayerPrepareCompleted;
             videoPlayer.started -= VideoPlayerStarted;
@@ -272,25 +254,32 @@ namespace EunomiaUnity
             videoPlayer.errorReceived -= VideoPlayerErrorRecieved;
         }
 
-        void OnEnable()
+        private void OnValidate()
         {
-            var renderer = gameObject.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                renderer.enabled = true;
-            }
-            Play();
+#if UNITY_EDITOR
+            videoPlayer = this.RequireComponentInstance<VideoPlayer>();
+#endif
         }
 
-        void OnDisable()
+        private DropdownList<string> GetFadeMaterialParameterOptions()
         {
-            Pause();
-            var renderer = gameObject.GetComponent<Renderer>();
-            if (renderer != null)
+            var rendererComponent = this.GetComponent<Renderer>();
+            if (rendererComponent == null)
             {
-                renderer.enabled = false;
+                return null;
             }
+
+            var result = new DropdownList<string>();
+
+            rendererComponent.GetSharedMaterialShaderProperties(ShaderPropertyType.Color)
+                .ForEach((parameterName) => result.Add(parameterName, parameterName));
+
+            return result;
         }
+
+        public event EventHandler OnPrepared;
+        public event EventHandler OnStarted;
+        public event EventHandler OnLoopPointReached;
 
         private void VideoPlayerPrepareCompleted(VideoPlayer source)
         {
@@ -300,21 +289,22 @@ namespace EunomiaUnity
                 taskCompletionSources = onPrepared.Copy();
                 onPrepared.Clear();
             }
-            taskCompletionSources.ForEach((taskCompletionSource, index) =>
-            {
-                taskCompletionSource.TrySetResult(this);
-            });
-            OnPrepared?.Invoke(this, new EventArgs());
+
+            var instance = this;
+            taskCompletionSources.ForEach(
+                (taskCompletionSource, index) => taskCompletionSource.TrySetResult(instance)
+            );
+            OnPrepared?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            OnStarted?.Invoke(this, new EventArgs());
+            OnStarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerLoopPointReached(VideoPlayer source)
         {
-            OnLoopPointReached?.Invoke(this, new EventArgs());
+            OnLoopPointReached?.Invoke(this, EventArgs.Empty);
         }
 
         private void VideoPlayerErrorRecieved(VideoPlayer source, string error)
@@ -335,11 +325,12 @@ namespace EunomiaUnity
         {
             if (IsAssignedContent)
             {
-                var renderer = gameObject.GetComponent<Renderer>();
-                if (renderer != null)
+                var rendererComponent = gameObject.GetComponent<Renderer>();
+                if (rendererComponent != null)
                 {
-                    renderer.enabled = true;
+                    rendererComponent.enabled = true;
                 }
+
                 videoPlayer.Play();
             }
         }
@@ -347,20 +338,20 @@ namespace EunomiaUnity
         public void Pause()
         {
             videoPlayer.Pause();
-            var renderer = gameObject.GetComponent<Renderer>();
-            if (renderer != null)
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
             {
-                renderer.enabled = false;
+                rendererComponent.enabled = false;
             }
         }
 
         public void Stop()
         {
             videoPlayer.Stop();
-            var renderer = gameObject.GetComponent<Renderer>();
-            if (renderer != null)
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
             {
-                renderer.enabled = false;
+                rendererComponent.enabled = false;
             }
         }
 
@@ -373,6 +364,7 @@ namespace EunomiaUnity
             {
                 onPrepared.Add(prepareTask);
             }
+
             return prepareTask.Task;
         }
 
@@ -408,7 +400,7 @@ namespace EunomiaUnity
         {
             notifications.Add(new AtPercentNotification()
             {
-                perform = perform,
+                Perform = perform,
                 atPercent = atPercent
             });
         }
@@ -417,25 +409,25 @@ namespace EunomiaUnity
         {
             notifications.Add(new AtTimeFromEndNotification()
             {
-                perform = perform,
+                Perform = perform,
                 atTimeFromEnd = atTimeFromEnd
             });
         }
 
-        void PerformAndRemove(INotification perform)
+        private void PerformAndRemove(INotification perform)
         {
-            perform.perform.Invoke(this);
+            perform.Perform.Invoke(this);
             notifications.Remove(perform);
         }
 
-        void UpdateNotifications()
+        private void UpdateNotifications()
         {
             if (videoPlayer.length == 0)
             {
                 return;
             }
 
-            int index = 0;
+            var index = 0;
             while (index < notifications.Count)
             {
                 var notification = notifications[index];
@@ -447,6 +439,7 @@ namespace EunomiaUnity
                             PerformAndRemove(atPercent);
                             continue;
                         }
+
                         break;
                     case AtTimeFromEndNotification atTimeFromEnd:
                         if (atTimeFromEnd.atTimeFromEnd >= videoPlayer.length - videoPlayer.time)
@@ -454,95 +447,121 @@ namespace EunomiaUnity
                             PerformAndRemove(atTimeFromEnd);
                             continue;
                         }
+
                         break;
                 }
+
                 index++;
             }
         }
 
-        void UpdateFade()
+        private void UpdateFade()
         {
-            if (fadeInDuration != 0 || fadeOutDuration != 0)
+            if (fadeInDuration == 0 && fadeOutDuration == 0)
             {
-                if (!VideoPlayerIsRenderModeMaterialOverride)
-                {
-                    return;
-                }
-
-                var renderer = gameObject.GetComponent<Renderer>();
-                if (renderer == null || renderer.material == null)
-                {
-                    return; // TODO: throw?
-                }
-                var color = renderer.material.GetColor(fadeMaterialParameter);
-                if (color == null)
-                {
-                    return; // TODO: throw?
-                }
-
-                float newAlpha;
-                if (!IsPlaying)
-                {
-                    newAlpha = 0;
-
-                }
-                else if (fadeInDuration != 0 && Time <= fadeInDuration)
-                {
-                    newAlpha = ((float)(Time)).Map(0, fadeInDuration, 0, 1);
-                }
-                else if (fadeOutDuration != 0 && Duration - Time <= fadeOutDuration)
-                {
-                    newAlpha = ((float)(Duration - Time)).Map(0, fadeOutDuration, 0, 1);
-                }
-                else
-                {
-                    newAlpha = 1;
-                }
-
-                if (newAlpha != color.a)
-                {
-                    var newColor = new Color(
-                        color.r,
-                        color.g,
-                        color.b,
-                        newAlpha
-                    );
-                    renderer.material.SetColor(fadeMaterialParameter, newColor);
-                }
+                return;
             }
-        }
 
-        void Update()
-        {
-            UpdateNotifications();
-            UpdateFade(); // TODO: elaborate insight in Notifications to be able to use it for fading in and fading out
+            if (!VideoPlayerIsRenderModeMaterialOverride)
+            {
+                return;
+            }
+
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent == null || rendererComponent.material == null)
+            {
+                return; // TODO: throw?
+            }
+
+            var color = rendererComponent.material.GetColor(fadeMaterialParameter);
+
+            float newAlpha;
+            if (!IsPlaying)
+            {
+                newAlpha = 0;
+            }
+            else if (fadeInDuration != 0 && Time <= fadeInDuration)
+            {
+                newAlpha = ((float)Time).Map(0, fadeInDuration, 0, 1);
+            }
+            else if (fadeOutDuration != 0 && Duration - Time <= fadeOutDuration)
+            {
+                newAlpha = ((float)(Duration - Time)).Map(0, fadeOutDuration, 0, 1);
+            }
+            else
+            {
+                newAlpha = 1;
+            }
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (newAlpha == color.a)
+            {
+                return;
+            }
+
+            var newColor = new Color(
+                color.r,
+                color.g,
+                color.b,
+                newAlpha
+            );
+            rendererComponent.material.SetColor(fadeMaterialParameter, newColor);
         }
 
         [Button]
-        void SaveCurrentFrameToDisk()
+        private void SaveCurrentFrameToDisk()
         {
-            if (videoPlayer == null || videoPlayer.texture == null)
+            if (videoPlayer == null)
             {
-                Debug.LogWarning("Unable to Save Current Frame To Disk, Video Player or Video Player's texture not found", this);
-                return;
-            }
-            var texture = (RenderTexture)videoPlayer.texture;
-            if (texture == null)
-            {
-                Debug.LogWarning($"Unable to Save Current Frame To Disk, expected Video Player's Texture to be {typeof(RenderTexture)}, received '{videoPlayer.texture.GetType()}'", this);
+                Debug.LogWarning(
+                    "Unable to Save Current Frame To Disk, Video Player not found", this);
                 return;
             }
 
-            var savePath = $"{Application.temporaryCachePath}/Video_{gameObject.name}-{gameObject.GetInstanceID()}_frame-{videoPlayer.frame}.png";
+            var texture = videoPlayer.CurrentRenderTexture();
+            if (texture == null)
+            {
+                Debug.LogWarning(
+                    $"Unable to Save Current Frame To Disk, expected Video Player's Texture to be {typeof(RenderTexture)}, received '{videoPlayer.texture.GetType()}'",
+                    this);
+                return;
+            }
+
+            var savePath =
+                $"{Application.temporaryCachePath}/Video_{gameObject.name}-{gameObject.GetInstanceID()}_frame-{videoPlayer.frame}.png";
             texture.WritePNGToDisk(savePath);
             Debug.Log($"Current Frame saved to '{savePath}'", this);
         }
 
-        void OnValidate()
+        private interface INotification
         {
-#if UNITY_EDITOR
-            videoPlayer = this.RequireComponentInstance<VideoPlayer>();
-#endif
+            Action<Video> Perform { get; }
+        }
+
+        [Serializable]
+        private class AtPercentNotification : INotification
+        {
+            public float atPercent;
+            public Action<Video> Perform { get; set; }
+
+            public override string ToString()
+            {
+                // ReSharper disable once HeapView.BoxingAllocation
+                return $"At percent: {atPercent}%";
+            }
+        }
+
+        [Serializable]
+        private class AtTimeFromEndNotification : INotification
+        {
+            public float atTimeFromEnd;
+            public Action<Video> Perform { get; set; }
+
+            public override string ToString()
+            {
+                // ReSharper disable once HeapView.BoxingAllocation
+                return $"At time from end: {atTimeFromEnd} seconds";
+            }
         }
     }
 }

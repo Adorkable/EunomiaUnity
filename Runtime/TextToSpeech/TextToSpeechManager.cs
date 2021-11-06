@@ -1,17 +1,13 @@
 using System;
 using Cysharp.Threading.Tasks;
+using EunomiaUnity.TextToSpeech.UI;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity.TextToSpeech
 {
     public class TextToSpeechManager : MonoBehaviour
     {
-        [SerializeField]
-        private TextToSpeech windowsTextToSpeech;
-
-        [SerializeField]
-        private TextToSpeech macOSTextToSpeech;
-
         [Serializable]
         public enum EditorTextToSpeechType
         {
@@ -19,16 +15,19 @@ namespace EunomiaUnity.TextToSpeech
             UI,
             Platform
         }
-        [SerializeField]
-        private EditorTextToSpeechType editorTextToSpeech = EditorTextToSpeechType.Console;
-        protected EditorTextToSpeechType EditorTextToSpeech => editorTextToSpeech;
+
+        [SerializeField] private TextToSpeech windowsTextToSpeech;
+
+        [SerializeField] private TextToSpeech macOSTextToSpeech;
+
+        [SerializeField] private EditorTextToSpeechType editorTextToSpeech = EditorTextToSpeechType.Console;
+
+        [SerializeField] private TextToUIText textToUIText;
 
         private TextToUnityConsole textToUnityConsole;
+        protected EditorTextToSpeechType EditorTextToSpeech => editorTextToSpeech;
         protected TextToUnityConsole TextToUnityConsole => textToUnityConsole;
-
-        [SerializeField]
-        private UI.TextToUIText textToUIText;
-        protected UI.TextToUIText TextToUIText => textToUIText;
+        protected TextToUIText TextToUIText => textToUIText;
 
         protected virtual void Awake()
         {
@@ -50,6 +49,16 @@ namespace EunomiaUnity.TextToSpeech
 #endif
         }
 
+        public virtual void OnEnable()
+        {
+            UpdateCurrentTextToSpeech(true);
+        }
+
+        public virtual void OnDisable()
+        {
+            UpdateCurrentTextToSpeech(false);
+        }
+
         protected TextToSpeech GetCurrentTextToSpeech()
         {
 #if UNITY_EDITOR
@@ -69,23 +78,13 @@ namespace EunomiaUnity.TextToSpeech
 #endif
         }
 
-        protected virtual void UpdateCurrentTextToSpeech(bool enabled)
+        protected virtual void UpdateCurrentTextToSpeech(bool enable)
         {
             var textToSpeech = GetCurrentTextToSpeech();
             if (textToSpeech != null)
             {
-                textToSpeech.enabled = enabled;
+                textToSpeech.enabled = enable;
             }
-        }
-
-        public virtual void OnEnable()
-        {
-            UpdateCurrentTextToSpeech(true);
-        }
-
-        public virtual void OnDisable()
-        {
-            UpdateCurrentTextToSpeech(false);
         }
 
         public async UniTask StopAndSpeak(string speak, float pauseDuration = 0.5f)
@@ -160,5 +159,4 @@ namespace EunomiaUnity.TextToSpeech
             textToSpeech.StopSpeaking();
         }
     }
-
 }

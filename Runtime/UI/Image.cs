@@ -1,30 +1,23 @@
-﻿using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
-using EunomiaUnity;
+﻿using Cysharp.Threading.Tasks;
 using NaughtyAttributes;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
     [RequireComponent(typeof(UnityEngine.UI.Image))]
     public class Image : MonoBehaviour
     {
-        [ShowAssetPreview]
-        private UnityEngine.UI.Image image;
+        [ShowAssetPreview] private UnityEngine.UI.Image image;
+
+        private string url;
 
         [ShowNativeProperty]
         public string Url
         {
-            get
-            {
-                return url;
-            }
-            set
-            {
-                _ = Set(value);
-            }
+            get { return url; }
+            set { _ = Set(value); }
         }
-        private string url;
 
         [ShowNativeProperty]
         public Vector2Int Size
@@ -40,7 +33,7 @@ namespace EunomiaUnity.UI
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             image = this.RequireComponentInstance<UnityEngine.UI.Image>();
             if (image == null)
@@ -49,17 +42,7 @@ namespace EunomiaUnity.UI
             }
         }
 
-        public async UniTask Set(string url)
-        {
-            this.url = url;
-
-            if (image != null)
-            {
-                image.sprite = await SpriteUtility.LoadUrl(url);
-            }
-        }
-
-        void OnEnable()
+        private void OnEnable()
         {
             if (image != null)
             {
@@ -67,11 +50,21 @@ namespace EunomiaUnity.UI
             }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             if (image != null)
             {
                 image.enabled = false;
+            }
+        }
+
+        public async UniTask Set(string newUrl)
+        {
+            url = newUrl;
+
+            if (image != null)
+            {
+                image.sprite = await SpriteUtility.LoadUrl(newUrl);
             }
         }
     }

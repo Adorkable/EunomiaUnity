@@ -1,3 +1,5 @@
+// ReSharper disable once CheckNamespace
+
 namespace EunomiaUnity
 {
     public class OnFinishedDeactivator : OnFinishedResponder

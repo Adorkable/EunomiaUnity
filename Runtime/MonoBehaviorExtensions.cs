@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     public static class MonoBehaviorExtensions_Require
@@ -22,6 +23,7 @@ namespace EunomiaUnity
             {
                 monoBehaviour.LogMissingRequiredComponent(typeof(T));
             }
+
             return result;
         }
     };

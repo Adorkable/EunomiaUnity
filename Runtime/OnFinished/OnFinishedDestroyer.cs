@@ -1,4 +1,6 @@
-﻿namespace EunomiaUnity
+﻿// ReSharper disable once CheckNamespace
+
+namespace EunomiaUnity
 {
     public class OnFinishedDestroyer : OnFinishedResponder
     {
@@ -12,5 +14,4 @@
             Destroy(this.gameObject);
         }
     }
-
 }
