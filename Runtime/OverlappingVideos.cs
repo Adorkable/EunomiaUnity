@@ -7,6 +7,7 @@ using UnityEngine.Video;
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
+    [AddComponentMenu("Video/Overlapping Videos")]
     // TODO: test with Current and Next swapping between using Url and VideoClip
     public class OverlappingVideos : MonoBehaviour
     {

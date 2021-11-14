@@ -3,6 +3,8 @@
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
+    [HelpURL("http://github.com/Adorkable/EunomiaUnity")]
+    [DisallowMultipleComponent]
     public class EunomiaUnityInitializer : Initializer
     {
         [SerializeField] private Random random;

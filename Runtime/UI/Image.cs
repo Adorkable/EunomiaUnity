@@ -5,6 +5,7 @@ using UnityEngine;
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
+    [AddComponentMenu("UI/Image (Eunomia)")]
     [RequireComponent(typeof(UnityEngine.UI.Image))]
     public class Image : MonoBehaviour
     {

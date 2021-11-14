@@ -7,6 +7,7 @@ using UnityEngine.UI;
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
+    [AddComponentMenu("UI/Overlapping Videos")]
     public class OverlappingVideos : MonoBehaviour
     {
         [SerializeField] private Video first;

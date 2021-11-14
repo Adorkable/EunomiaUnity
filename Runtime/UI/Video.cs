@@ -10,6 +10,7 @@ using UnityEngine.Video;
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
+    [AddComponentMenu("UI/Video")]
     [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(RawImage))]
     public class Video : MonoBehaviour
     {
