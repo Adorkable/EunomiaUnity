@@ -7,12 +7,14 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Video;
 
+// TODO: rethink if we can merge this and UI/Video
+
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     [AddComponentMenu("Video/Video")]
     [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(Renderer))]
-    public class Video : MonoBehaviour
+    public class Video : MonoBehaviour, IVideo
     {
         [SerializeField, ShowIf("VideoPlayerIsRenderModeMaterialOverride")]
         public float fadeInDuration = 0.5f;
@@ -397,7 +399,7 @@ namespace EunomiaUnity
             }
         }
 
-        public void AddNotificationAtPercent(Action<Video> perform, float atPercent)
+        public void AddNotificationAtPercent(Action<IVideo> perform, float atPercent)
         {
             notifications.Add(new AtPercentNotification()
             {
@@ -406,7 +408,7 @@ namespace EunomiaUnity
             });
         }
 
-        public void AddNotificationAtTimeFromEnd(Action<Video> perform, float atTimeFromEnd)
+        public void AddNotificationAtTimeFromEnd(Action<IVideo> perform, float atTimeFromEnd)
         {
             notifications.Add(new AtTimeFromEndNotification()
             {

@@ -4,20 +4,26 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Video;
 
+// TODO: rename to Overlapping Videos Controller or something of the like to clarify its role
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
     [AddComponentMenu("Video/Overlapping Videos")]
     // TODO: test with Current and Next swapping between using Url and VideoClip
+    [Obsolete("Use OverlappingVideosController")]
     public class OverlappingVideos : MonoBehaviour
     {
-        [SerializeField] private Video first;
+        [SerializeField]
+        private Video first;
 
-        [SerializeField] private Video second;
+        [SerializeField]
+        private Video second;
 
-        [SerializeField] private float overlapDuration = 0.5f;
+        [SerializeField]
+        private float overlapDuration = 0.5f;
 
-        [SerializeField] private bool crossfadeOverlap = true;
+        [SerializeField]
+        private bool crossfadeOverlap = true;
 
         private int currentIndex;
 
@@ -201,7 +207,7 @@ namespace EunomiaUnity
                 return;
             }
 
-            videos = new[] {first, second};
+            videos = new[] { first, second };
             videos.ForEach((video, index) =>
             {
                 if (crossfadeOverlap)
@@ -228,7 +234,7 @@ namespace EunomiaUnity
         private void OnValidate()
         {
 #if UNITY_EDITOR
-            videos = new[] {first, second};
+            videos = new[] { first, second };
 #endif
         }
 
@@ -295,9 +301,9 @@ namespace EunomiaUnity
             }
         }
 
-        private void HandleAtOverlapTime(Video source)
+        private void HandleAtOverlapTime(IVideo source)
         {
-            if (source != Next)
+            if (source is Video sourceVideo && sourceVideo != Next)
             {
                 OverlapNext();
             }

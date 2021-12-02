@@ -2,22 +2,28 @@
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace EunomiaUnity {
-    public class InputMock : EunomiaUnity.GetKeyDownSource {
+namespace EunomiaUnity
+{
+    public class InputMock : EunomiaUnity.IGetKeyDownSource
+    {
         public interface Action { }
 
-        public class KeyDown : Action {
+        public class KeyDown : Action
+        {
             public KeyCode keyCode;
 
-            public KeyDown(KeyCode keyCode) {
+            public KeyDown(KeyCode keyCode)
+            {
                 this.keyCode = keyCode;
             }
         }
 
-        public class Wait : Action {
+        public class Wait : Action
+        {
             public float waitTimeInSeconds;
 
-            public Wait(float waitTimeInSeconds) {
+            public Wait(float waitTimeInSeconds)
+            {
                 this.waitTimeInSeconds = waitTimeInSeconds;
             }
         }
@@ -27,12 +33,15 @@ namespace EunomiaUnity {
         private float timeSinceLastActionInSeconds = 0;
         private float lastUpdateTime = -1;
 
-        public bool GetKeyDown(KeyCode key) {
-            if (this.actions.Count == 0) {
+        public bool GetKeyDown(KeyCode key)
+        {
+            if (this.actions.Count == 0)
+            {
                 return false;
             }
 
-            switch (this.actions[0]) {
+            switch (this.actions[0])
+            {
                 case KeyDown keyDown:
                     return keyDown.keyCode == key;
 
@@ -44,25 +53,30 @@ namespace EunomiaUnity {
             }
         }
 
-        public void Update() {
-            if (this.lastUpdateTime != -1) {
+        public void Update()
+        {
+            if (this.lastUpdateTime != -1)
+            {
                 this.timeSinceLastActionInSeconds += Time.time - this.lastUpdateTime;
             }
             this.lastUpdateTime = Time.time;
 
-            if (this.actions.Count == 0) {
+            if (this.actions.Count == 0)
+            {
                 return;
             }
 
             bool resetTime = false;
-            switch (this.actions[0]) {
+            switch (this.actions[0])
+            {
                 case KeyDown keyDown:
                     this.actions.RemoveAt(0);
                     resetTime = true;
                     break;
 
                 case Wait wait:
-                    if (this.timeSinceLastActionInSeconds >= wait.waitTimeInSeconds) {
+                    if (this.timeSinceLastActionInSeconds >= wait.waitTimeInSeconds)
+                    {
                         this.actions.RemoveAt(0);
                         resetTime = true;
                     }
@@ -72,7 +86,8 @@ namespace EunomiaUnity {
                     break;
             }
 
-            if (resetTime) {
+            if (resetTime)
+            {
                 this.timeSinceLastActionInSeconds = 0;
             }
         }

@@ -12,6 +12,7 @@ namespace Tests
 
         // TODO: test multiple secret codes
 
+        [AddComponentMenu("Tests/Testers/Secret Code")]
         private class SecretCodeTester : EunomiaUnity.InputTester
         {
             protected EunomiaUnity.SecretCodeDetector secretCodeDetector;

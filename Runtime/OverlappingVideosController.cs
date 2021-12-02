@@ -1,30 +1,84 @@
-﻿using System;
+using System;
 using Eunomia;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Video;
 
+// TODO: rename to Overlapping Videos Controller or something of the like to clarify its role
 // ReSharper disable once CheckNamespace
-namespace EunomiaUnity.UI
+namespace EunomiaUnity
 {
-    [AddComponentMenu("UI/Overlapping Videos")]
-    [Obsolete("Use OverlappingVideosController")]
-    public class OverlappingVideos : MonoBehaviour
+    public interface IVideo
     {
-        [SerializeField] private Video first;
+        bool IsPlaying { get; }
+        bool PlayOnAwake { get; set; }
+        bool IsLooping { get; set; }
 
-        [SerializeField] private Video second;
+        bool IsAssignedContent { get; }
+        VideoClip VideoClip { get; set; }
+        string Url { get; set; }
 
-        [SerializeField] private float overlapDuration = 0.25f;
+        double Duration { get; }
+        double Time { get; set; }
+
+        Vector2Int Size { get; }
+
+        event EventHandler OnLoopPointReached;
+
+        void Play();
+        void Prepare();
+        void Pause();
+        void Stop();
+
+        void AddNotificationAtPercent(Action<IVideo> perform, float atPercent);
+        void AddNotificationAtTimeFromEnd(Action<IVideo> perform, float atTimeFromEnd);
+    }
+
+    [AddComponentMenu("Video/Overlapping Videos Controller")]
+    // TODO: test with Current and Next swapping between using Url and VideoClip
+    public class OverlappingVideosController : MonoBehaviour
+    {
+        [Serializable]
+        enum VideoType
+        {
+            World,
+            UI
+        }
+        [SerializeField]
+        private VideoType videoType;
+
+        public bool VideoTypeIsWorld => videoType == VideoType.World;
+        public bool VideoTypeIsUI => videoType == VideoType.UI;
+
+        [SerializeField, Label("First"), ShowIf("VideoTypeIsWorld")]
+        private Video firstWorld;
+
+        [SerializeField, Label("Second"), ShowIf("VideoTypeIsWorld")]
+        private Video secondWorld;
+
+        [SerializeField, Label("First"), ShowIf("VideoTypeIsUI")]
+        private UI.Video firstUI;
+
+        [SerializeField, Label("Second"), ShowIf("VideoTypeIsUI")]
+        private UI.Video secondUI;
+
+        [SerializeField]
+        private float overlapDuration = 0.5f;
+
+        [SerializeField]
+        private bool crossfadeOverlap = true;
 
         private int currentIndex;
 
-        private Video[] videos;
+        private IVideo[] videos;
+
+        // [SerializeField]
+        // private bool allowLoopUntilNextPrepared = false;
 
         public float OverlapDuration
         {
-            get { return overlapDuration; }
-            set { overlapDuration = value; }
+            get => overlapDuration;
+            set => overlapDuration = value;
         }
 
         [ShowNativeProperty]
@@ -42,7 +96,7 @@ namespace EunomiaUnity.UI
         }
 
         [ShowNativeProperty]
-        private Video Current
+        private IVideo Current
         {
             get
             {
@@ -52,6 +106,20 @@ namespace EunomiaUnity.UI
                 }
 
                 return videos[currentIndex];
+            }
+        }
+
+        [ShowNativeProperty]
+        public VideoClip CurrentVideoClip
+        {
+            get
+            {
+                if (Current != null)
+                {
+                    return Current.VideoClip;
+                }
+
+                return null;
             }
         }
 
@@ -112,9 +180,23 @@ namespace EunomiaUnity.UI
         }
 
         [ShowNativeProperty]
-        private Video Next
+        private IVideo Next
         {
             get { return videos[(currentIndex + 1).Wrap(videos.Length)]; }
+        }
+
+        [ShowNativeProperty]
+        public VideoClip NextVideoClip
+        {
+            get
+            {
+                if (Next != null)
+                {
+                    return Next.VideoClip;
+                }
+
+                return null;
+            }
         }
 
         [ShowNativeProperty]
@@ -161,15 +243,50 @@ namespace EunomiaUnity.UI
 
         protected void Awake()
         {
-            if (first == null || second == null)
+            switch (videoType)
             {
-                Debug.LogError("Expect two Video references to function correctly", this);
-                enabled = false;
-                return;
+                case VideoType.World:
+                    if (firstWorld == null || secondWorld == null)
+                    {
+                        Debug.LogError("Expect two Video references to function correctly", this);
+                        enabled = false;
+                        return;
+                    }
+
+                    videos = new[] { firstWorld, secondWorld };
+                    break;
+
+                case VideoType.UI:
+                    if (firstUI == null || secondUI == null)
+                    {
+                        Debug.LogError("Expect two Video references to function correctly", this);
+                        enabled = false;
+                        return;
+                    }
+
+                    videos = new[] { firstUI, secondUI };
+                    break;
             }
 
-            videos = new[] { first, second };
-            videos.ForEach((video, index) => { video.OnLoopPointReached += VideoLoopPointReached; });
+            videos.ForEach((video, index) =>
+            {
+                if (video is Video worldVideo)
+                {
+                    if (crossfadeOverlap)
+                    {
+                        worldVideo.fadeInDuration = overlapDuration;
+                        worldVideo.fadeOutDuration = overlapDuration;
+                    }
+                    else
+                    {
+                        worldVideo.fadeInDuration = 0;
+                        worldVideo.fadeOutDuration = 0;
+                    }
+                }
+
+                video.PlayOnAwake = false;
+                video.OnLoopPointReached += VideoLoopPointReached;
+            });
         }
 
         private void OnDestroy()
@@ -180,12 +297,7 @@ namespace EunomiaUnity.UI
         private void OnValidate()
         {
 #if UNITY_EDITOR
-            videos = new[] { first, second };
-            if (Next != null)
-            {
-                var rawImage = Next.RequireComponentInstance<RawImage>();
-                rawImage.enabled = false;
-            }
+            videos = new[] { firstWorld, secondWorld };
 #endif
         }
 
@@ -198,10 +310,17 @@ namespace EunomiaUnity.UI
             {
                 Current.Stop();
 
-                if (String.IsNullOrWhiteSpace(Next.Url))
+                if (!Next.IsAssignedContent)
                 {
                     Next.Stop();
-                    Next.SetUrl(Current.Url);
+                    if (Current.VideoClip != null)
+                    {
+                        Next.VideoClip = Current.VideoClip;
+                    }
+                    else
+                    {
+                        Next.Url = Current.Url;
+                    }
                 }
 
                 currentIndex = (currentIndex + 1).Wrap(videos.Length);
@@ -226,9 +345,16 @@ namespace EunomiaUnity.UI
         // TODO: work out what happens if next finishes before current
         private void OverlapNext()
         {
-            if (String.IsNullOrWhiteSpace(Next.Url))
+            if (!Next.IsAssignedContent)
             {
-                Next.Url = Current.Url;
+                if (Current.VideoClip != null)
+                {
+                    Next.VideoClip = Current.VideoClip;
+                }
+                else
+                {
+                    Next.Url = Current.Url;
+                }
             }
 
             Next.Play();
@@ -240,7 +366,7 @@ namespace EunomiaUnity.UI
 
         private void HandleAtOverlapTime(IVideo source)
         {
-            if (source is Video sourceVideo && sourceVideo != Next)
+            if (source != Next)
             {
                 OverlapNext();
             }
@@ -248,9 +374,22 @@ namespace EunomiaUnity.UI
             OnReachedOverlapPoint?.Invoke(this, EventArgs.Empty);
         }
 
+        public void SetNextVideoClip(VideoClip videoClip)
+        {
+            if (!Current.IsAssignedContent)
+            {
+                Current.VideoClip = videoClip;
+                Current.Prepare();
+            }
+            else
+            {
+                Next.VideoClip = videoClip;
+            }
+        }
+
         public void SetNextUrl(string url)
         {
-            if (String.IsNullOrWhiteSpace(Current.Url))
+            if (!Current.IsAssignedContent)
             {
                 Current.Url = url;
                 Current.Prepare();
@@ -265,7 +404,7 @@ namespace EunomiaUnity.UI
         {
             if (Current != null)
             {
-                if (String.IsNullOrWhiteSpace(Current.Url) == false)
+                if (Current.IsAssignedContent)
                 {
                     Current.Play();
                     if (overlapDuration > 0)

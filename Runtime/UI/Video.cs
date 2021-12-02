@@ -7,12 +7,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
+// TODO: rethink if we can merge this and Video/Video
+
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity.UI
 {
     [AddComponentMenu("UI/Video")]
     [RequireComponent(typeof(VideoPlayer)), RequireComponent(typeof(RawImage))]
-    public class Video : MonoBehaviour
+    public class Video : MonoBehaviour, IVideo
     {
         [SerializeField] private RenderTexture renderTextureTemplate;
 
@@ -58,6 +60,21 @@ namespace EunomiaUnity.UI
         }
 
         [ShowNativeProperty]
+        public VideoClip VideoClip
+        {
+            get
+            {
+                if (videoPlayer != null)
+                {
+                    return videoPlayer.clip;
+                }
+
+                return null;
+            }
+            set { _ = SetVideoClip(value); }
+        }
+
+        [ShowNativeProperty]
         public string Url
         {
             get
@@ -98,6 +115,13 @@ namespace EunomiaUnity.UI
 
                 return 0;
             }
+            set
+            {
+                if (videoPlayer != null)
+                {
+                    videoPlayer.time = value;
+                }
+            }
         }
 
         [ShowNativeProperty]
@@ -117,6 +141,40 @@ namespace EunomiaUnity.UI
                 }
 
                 return new Vector2Int(texture.width, texture.height);
+            }
+        }
+
+        [ShowNativeProperty]
+        public bool PlayOnAwake
+        {
+            get
+            {
+                if (videoPlayer != null)
+                {
+                    return videoPlayer.playOnAwake;
+                }
+
+                return false;
+            }
+            set
+            {
+                if (videoPlayer != null)
+                {
+                    videoPlayer.playOnAwake = value;
+                }
+            }
+        }
+
+        public bool IsAssignedContent
+        {
+            get
+            {
+                if (videoPlayer != null)
+                {
+                    return !String.IsNullOrWhiteSpace(videoPlayer.url) || videoPlayer.clip != null;
+                }
+
+                return false;
             }
         }
 
@@ -268,29 +326,48 @@ namespace EunomiaUnity.UI
             videoPlayer.Stop();
         }
 
+        private UniTask PrepareAfterSet()
+        {
+            videoPlayer.Prepare();
+
+            var prepareTask = new UniTaskCompletionSource<Video>();
+            lock (onPrepared)
+            {
+                onPrepared.Add(prepareTask);
+            }
+
+            return prepareTask.Task;
+        }
+
+        public UniTask SetVideoClip(VideoClip videoClip)
+        {
+            videoPlayer.clip = videoClip;
+            if (videoClip != null)
+            {
+                return PrepareAfterSet();
+            }
+            else
+            {
+                Stop();
+                return UniTask.CompletedTask;
+            }
+        }
+
         public UniTask SetUrl(string url)
         {
             videoPlayer.url = url;
             if (String.IsNullOrWhiteSpace(videoPlayer.url) == false)
             {
-                videoPlayer.Prepare();
-
-                var prepareTask = new UniTaskCompletionSource<Video>();
-                lock (onPrepared)
-                {
-                    onPrepared.Add(prepareTask);
-                }
-
-                return prepareTask.Task;
+                return PrepareAfterSet();
             }
             else
             {
-                videoPlayer.Stop();
+                Stop();
                 return UniTask.CompletedTask;
             }
         }
 
-        public void AddNotificationAtPercent(Action<Video> perform, float atPercent)
+        public void AddNotificationAtPercent(Action<IVideo> perform, float atPercent)
         {
             notifications.Add(new AtPercentNotification()
             {
@@ -299,7 +376,7 @@ namespace EunomiaUnity.UI
             });
         }
 
-        public void AddNotificationAtTimeFromEnd(Action<Video> perform, float atTimeFromEnd)
+        public void AddNotificationAtTimeFromEnd(Action<IVideo> perform, float atTimeFromEnd)
         {
             notifications.Add(new AtTimeFromEndNotification()
             {
