@@ -182,12 +182,18 @@ namespace EunomiaUnity
             {
                 if (videoPlayer != null)
                 {
-                    return !String.IsNullOrWhiteSpace(videoPlayer.url) || videoPlayer.clip != null;
+                    return !String.IsNullOrWhiteSpace(videoPlayer.url)
+                    || videoPlayer.clip != null;
                 }
 
                 return false;
             }
         }
+
+        public event EventHandler OnPrepared;
+        public event EventHandler OnStarted;
+        public event EventHandler OnLoopPointReached;
+        public event EventHandler<string> OnErrorReceived;
 
         protected void Awake()
         {
@@ -280,10 +286,6 @@ namespace EunomiaUnity
             return result;
         }
 
-        public event EventHandler OnPrepared;
-        public event EventHandler OnStarted;
-        public event EventHandler OnLoopPointReached;
-
         private void VideoPlayerPrepareCompleted(VideoPlayer source)
         {
             IList<UniTaskCompletionSource<Video>> taskCompletionSources;
@@ -313,7 +315,7 @@ namespace EunomiaUnity
         private void VideoPlayerErrorRecieved(VideoPlayer source, string error)
         {
             Debug.LogError(error, this);
-            VideoPlayerLoopPointReached(source);
+            OnErrorReceived?.Invoke(this, error);
         }
 
         public void Prepare()

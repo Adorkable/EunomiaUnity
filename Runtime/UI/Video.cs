@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Eunomia;
 using NaughtyAttributes;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -171,12 +172,18 @@ namespace EunomiaUnity.UI
             {
                 if (videoPlayer != null)
                 {
-                    return !String.IsNullOrWhiteSpace(videoPlayer.url) || videoPlayer.clip != null;
+                    return !String.IsNullOrWhiteSpace(videoPlayer.url)
+                        || videoPlayer.clip != null;
                 }
 
                 return false;
             }
         }
+
+        public event EventHandler OnPrepared;
+        public event EventHandler OnStarted;
+        public event EventHandler OnLoopPointReached;
+        public event EventHandler<string> OnErrorReceived;
 
         protected void Awake()
         {
@@ -223,7 +230,7 @@ namespace EunomiaUnity.UI
             videoPlayer.prepareCompleted += VideoPlayerPrepareCompleted;
             videoPlayer.started += VideoPlayerStarted;
             videoPlayer.loopPointReached += VideoPlayerLoopPointReached;
-            videoPlayer.errorReceived += VideoPlayerErrorRecieved;
+            videoPlayer.errorReceived += VideoPlayerErrorReceived;
 
             notifications = new List<INotification>();
         }
@@ -250,7 +257,7 @@ namespace EunomiaUnity.UI
             videoPlayer.prepareCompleted -= VideoPlayerPrepareCompleted;
             videoPlayer.started -= VideoPlayerStarted;
             videoPlayer.loopPointReached -= VideoPlayerLoopPointReached;
-            videoPlayer.errorReceived -= VideoPlayerErrorRecieved;
+            videoPlayer.errorReceived -= VideoPlayerErrorReceived;
         }
 
         private void OnValidate()
@@ -263,10 +270,6 @@ namespace EunomiaUnity.UI
             }
 #endif
         }
-
-        public event EventHandler OnPrepared;
-        public event EventHandler OnStarted;
-        public event EventHandler OnLoopPointReached;
 
         private void VideoPlayerPrepareCompleted(VideoPlayer source)
         {
@@ -294,33 +297,36 @@ namespace EunomiaUnity.UI
             OnLoopPointReached?.Invoke(this, EventArgs.Empty);
         }
 
-        private void VideoPlayerErrorRecieved(VideoPlayer source, string error)
+        private void VideoPlayerErrorReceived(VideoPlayer source, string error)
         {
             Debug.LogError(error, this);
-            VideoPlayerLoopPointReached(source);
+            OnErrorReceived?.Invoke(this, error);
         }
 
         public void Prepare()
         {
-            if (String.IsNullOrWhiteSpace(videoPlayer.url) == false)
+            if (IsAssignedContent)
             {
                 videoPlayer.Prepare();
             }
         }
 
+        [Button("Play")]
         public void Play()
         {
-            if (String.IsNullOrWhiteSpace(videoPlayer.url) == false)
+            if (IsAssignedContent)
             {
                 videoPlayer.Play();
             }
         }
 
+        [Button("Pause")]
         public void Pause()
         {
             videoPlayer.Pause();
         }
 
+        [Button("Stop")]
         public void Stop()
         {
             videoPlayer.Stop();
@@ -344,6 +350,7 @@ namespace EunomiaUnity.UI
             videoPlayer.clip = videoClip;
             if (videoClip != null)
             {
+                videoPlayer.source = VideoSource.VideoClip;
                 return PrepareAfterSet();
             }
             else
@@ -358,6 +365,7 @@ namespace EunomiaUnity.UI
             videoPlayer.url = url;
             if (String.IsNullOrWhiteSpace(videoPlayer.url) == false)
             {
+                videoPlayer.source = VideoSource.Url;
                 return PrepareAfterSet();
             }
             else
@@ -378,6 +386,7 @@ namespace EunomiaUnity.UI
 
         public void AddNotificationAtTimeFromEnd(Action<IVideo> perform, float atTimeFromEnd)
         {
+            Debug.Log($"{gameObject.name} Notification added at time from end {atTimeFromEnd}");
             notifications.Add(new AtTimeFromEndNotification()
             {
                 perform = perform,
@@ -388,7 +397,11 @@ namespace EunomiaUnity.UI
         private void PerformAndRemove(INotification perform)
         {
             perform.perform.Invoke(this);
-            notifications.Remove(perform);
+            var removeResult = notifications.Remove(perform);
+            if (!removeResult)
+            {
+                Debug.LogError("Unable to remove performed notification, will likely trigger again unexpectedly", this);
+            }
         }
 
         private void UpdateNotifications()

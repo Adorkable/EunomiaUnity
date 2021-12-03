@@ -24,6 +24,7 @@ namespace EunomiaUnity
         Vector2Int Size { get; }
 
         event EventHandler OnLoopPointReached;
+        event EventHandler<string> OnErrorReceived;
 
         void Play();
         void Prepare();
@@ -228,6 +229,20 @@ namespace EunomiaUnity
         }
 
         [ShowNativeProperty]
+        public double NextTime
+        {
+            get
+            {
+                if (Next != null)
+                {
+                    return Next.Time;
+                }
+
+                return 0;
+            }
+        }
+
+        [ShowNativeProperty]
         public Vector2Int NextSize
         {
             get
@@ -240,6 +255,10 @@ namespace EunomiaUnity
                 return new Vector2Int(0, 0);
             }
         }
+
+        public event EventHandler OnReachedLoopPoint;
+        public event EventHandler OnReachedOverlapPoint;
+        public event EventHandler<string> OnErrorReceived; // TODO: way to tell receiver if it was Current or Next
 
         protected void Awake()
         {
@@ -286,6 +305,7 @@ namespace EunomiaUnity
 
                 video.PlayOnAwake = false;
                 video.OnLoopPointReached += VideoLoopPointReached;
+                video.OnErrorReceived += VideoErrorReceived;
             });
         }
 
@@ -301,42 +321,49 @@ namespace EunomiaUnity
 #endif
         }
 
-        public event EventHandler OnReachedLoopPoint;
-        public event EventHandler OnReachedOverlapPoint;
+        private void MakeNextBecomeCurrent()
+        {
+            currentIndex = (currentIndex + 1).Wrap(videos.Length);
+        }
+
+        private void EnsureOverlap()
+        {
+            Current.Stop();
+
+            EnsureNextPrepared();
+
+            MakeNextBecomeCurrent();
+
+            if (Current.IsPlaying == false)
+            {
+                if (overlapDuration > 0)
+                {
+                    Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                }
+                Current.Play();
+            }
+
+            EnsureNextPrepared();
+        }
+
+        private void LoopCurrent()
+        {
+            if (Current.IsLooping == false)
+            {
+                Current.IsLooping = true;
+                Current.Play();
+            }
+        }
 
         private void VideoLoopPointReached(object video, EventArgs args)
         {
             if (overlapDuration > 0)
             {
-                Current.Stop();
-
-                if (!Next.IsAssignedContent)
-                {
-                    Next.Stop();
-                    if (Current.VideoClip != null)
-                    {
-                        Next.VideoClip = Current.VideoClip;
-                    }
-                    else
-                    {
-                        Next.Url = Current.Url;
-                    }
-                }
-
-                currentIndex = (currentIndex + 1).Wrap(videos.Length);
-                if (Current.IsPlaying == false)
-                {
-                    Current.Play();
-                    Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
-                }
+                EnsureOverlap();
             }
             else
             {
-                if (Current.IsLooping == false)
-                {
-                    Current.IsLooping = true;
-                    Current.Play();
-                }
+                LoopCurrent();
             }
 
             OnReachedLoopPoint?.Invoke(this, args);
@@ -345,22 +372,35 @@ namespace EunomiaUnity
         // TODO: work out what happens if next finishes before current
         private void OverlapNext()
         {
+            EnsureNextPrepared();
+
+            if (Next.IsAssignedContent)
+            {
+                if (overlapDuration > 0)
+                {
+                    Next.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                }
+                Next.Play();
+            }
+            else
+            {
+                Debug.LogError("Somehow Next was unable to ensure content", this);
+            }
+        }
+
+        private void EnsureNextPrepared()
+        {
             if (!Next.IsAssignedContent)
             {
+                Next.Stop();
                 if (Current.VideoClip != null)
                 {
                     Next.VideoClip = Current.VideoClip;
                 }
-                else
+                else if (String.IsNullOrWhiteSpace(Current.Url) == false)
                 {
                     Next.Url = Current.Url;
                 }
-            }
-
-            Next.Play();
-            if (overlapDuration > 0)
-            {
-                Next.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
             }
         }
 
@@ -406,11 +446,11 @@ namespace EunomiaUnity
             {
                 if (Current.IsAssignedContent)
                 {
-                    Current.Play();
                     if (overlapDuration > 0)
                     {
                         Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
                     }
+                    Current.Play();
                 }
             }
             else
@@ -426,7 +466,13 @@ namespace EunomiaUnity
 
         public void Stop()
         {
+            // TODO: Stop should clear all notifications since we're adding every Play
             Current.Stop();
+        }
+
+        private void VideoErrorReceived(object video, string error)
+        {
+            OnErrorReceived?.Invoke(video, error);
         }
     }
 }
