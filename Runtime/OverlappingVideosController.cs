@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Eunomia;
 using NaughtyAttributes;
 using UnityEngine;
@@ -8,33 +9,6 @@ using UnityEngine.Video;
 // ReSharper disable once CheckNamespace
 namespace EunomiaUnity
 {
-    public interface IVideo
-    {
-        bool IsPlaying { get; }
-        bool PlayOnAwake { get; set; }
-        bool IsLooping { get; set; }
-
-        bool IsAssignedContent { get; }
-        VideoClip VideoClip { get; set; }
-        string Url { get; set; }
-
-        double Duration { get; }
-        double Time { get; set; }
-
-        Vector2Int Size { get; }
-
-        event EventHandler OnLoopPointReached;
-        event EventHandler<string> OnErrorReceived;
-
-        void Play();
-        void Prepare();
-        void Pause();
-        void Stop();
-
-        void AddNotificationAtPercent(Action<IVideo> perform, float atPercent);
-        void AddNotificationAtTimeFromEnd(Action<IVideo> perform, float atTimeFromEnd);
-    }
-
     [AddComponentMenu("Video/Overlapping Videos Controller")]
     // TODO: test with Current and Next swapping between using Url and VideoClip
     public class OverlappingVideosController : MonoBehaviour
@@ -256,9 +230,29 @@ namespace EunomiaUnity
             }
         }
 
+        private IVideoNotification currentNotification;
+
         public event EventHandler OnReachedLoopPoint;
         public event EventHandler OnReachedOverlapPoint;
         public event EventHandler<string> OnErrorReceived; // TODO: way to tell receiver if it was Current or Next
+
+        // TODO: rethink this ownership
+        private MainThreadDispatcher MainThreadDispatcher
+        {
+            get
+            {
+                if (mainThreadDispatcher == null)
+                {
+                    mainThreadDispatcher = GetComponent<MainThreadDispatcher>();
+                    if (mainThreadDispatcher == null)
+                    {
+                        mainThreadDispatcher = gameObject.AddComponent<MainThreadDispatcher>();
+                    }
+                }
+                return mainThreadDispatcher;
+            }
+        }
+        private MainThreadDispatcher mainThreadDispatcher;
 
         protected void Awake()
         {
@@ -311,6 +305,7 @@ namespace EunomiaUnity
 
         private void OnDestroy()
         {
+            // TODO: cancel notification
             videos.ForEach((video, index) => { video.OnLoopPointReached -= VideoLoopPointReached; });
         }
 
@@ -326,11 +321,11 @@ namespace EunomiaUnity
             currentIndex = (currentIndex + 1).Wrap(videos.Length);
         }
 
-        private void EnsureOverlap()
+        private async UniTask EnsureOverlap()
         {
             Current.Stop();
 
-            EnsureNextPrepared();
+            var prepareTask = EnsureNextPrepared();
 
             MakeNextBecomeCurrent();
 
@@ -338,12 +333,16 @@ namespace EunomiaUnity
             {
                 if (overlapDuration > 0)
                 {
-                    Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                    if (currentNotification == null)
+                    {
+                        currentNotification = Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                    }
                 }
-                Current.Play();
+                await prepareTask;
+                MainThreadDispatcher.Invoke(() => Current.Play());
             }
 
-            EnsureNextPrepared();
+            await EnsureNextPrepared();
         }
 
         private void LoopCurrent()
@@ -351,7 +350,7 @@ namespace EunomiaUnity
             if (Current.IsLooping == false)
             {
                 Current.IsLooping = true;
-                Current.Play();
+                MainThreadDispatcher.Invoke(() => Current.Play());
             }
         }
 
@@ -359,7 +358,7 @@ namespace EunomiaUnity
         {
             if (overlapDuration > 0)
             {
-                EnsureOverlap();
+                _ = EnsureOverlap();
             }
             else
             {
@@ -370,17 +369,20 @@ namespace EunomiaUnity
         }
 
         // TODO: work out what happens if next finishes before current
-        private void OverlapNext()
+        private async UniTask OverlapNext()
         {
-            EnsureNextPrepared();
+            var prepareTask = EnsureNextPrepared();
 
             if (Next.IsAssignedContent)
             {
                 if (overlapDuration > 0)
                 {
-                    Next.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                    // TODO: double check not already registered
+                    currentNotification = Next.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
                 }
-                Next.Play();
+
+                await prepareTask;
+                MainThreadDispatcher.Invoke(() => Next.Play());
             }
             else
             {
@@ -388,27 +390,40 @@ namespace EunomiaUnity
             }
         }
 
-        private void EnsureNextPrepared()
+        private UniTask EnsureNextPrepared()
         {
+            UniTask result;
             if (!Next.IsAssignedContent)
             {
                 Next.Stop();
-                if (Current.VideoClip != null)
+                switch (Current.ContentSource)
                 {
-                    Next.VideoClip = Current.VideoClip;
-                }
-                else if (String.IsNullOrWhiteSpace(Current.Url) == false)
-                {
-                    Next.Url = Current.Url;
+                    case VideoSource.VideoClip:
+                        result = Next.SetVideoClip(Current.VideoClip);
+                        break;
+
+                    case VideoSource.Url:
+                        result = Next.SetUrl(Current.Url);
+                        break;
+
+                    default:
+                        result = UniTask.CompletedTask;
+                        break;
                 }
             }
+            else
+            {
+                result = UniTask.CompletedTask;
+            }
+            return result;
         }
 
         private void HandleAtOverlapTime(IVideo source)
         {
             if (source != Next)
             {
-                OverlapNext();
+                currentNotification = null;
+                _ = OverlapNext();
             }
 
             OnReachedOverlapPoint?.Invoke(this, EventArgs.Empty);
@@ -448,9 +463,10 @@ namespace EunomiaUnity
                 {
                     if (overlapDuration > 0)
                     {
-                        Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+                        // TODO: double check we haven't already registered
+                        currentNotification = Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
                     }
-                    Current.Play();
+                    MainThreadDispatcher.Invoke(() => Current.Play());
                 }
             }
             else
