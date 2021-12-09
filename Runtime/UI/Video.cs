@@ -80,6 +80,16 @@ namespace EunomiaUnity.UI
 #endif
         }
 
+        public override void Stop()
+        {
+            base.Stop();
+
+            if (rawImage != null && rawImage.texture != null && rawImage.texture is RenderTexture renderTexture)
+            {
+                renderTexture.Clear();
+            }
+        }
+
         [Button]
         private void SaveCurrentFrameToDisk()
         {
