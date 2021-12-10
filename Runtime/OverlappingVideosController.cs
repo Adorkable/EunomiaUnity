@@ -31,11 +31,17 @@ namespace EunomiaUnity
         [SerializeField, Label("Second"), ShowIf("VideoTypeIsWorld")]
         private Video secondWorld;
 
+        [SerializeField, Label("Third"), ShowIf("VideoTypeIsWorld")]
+        private Video thirdWorld;
+
         [SerializeField, Label("First"), ShowIf("VideoTypeIsUI")]
         private UI.Video firstUI;
 
         [SerializeField, Label("Second"), ShowIf("VideoTypeIsUI")]
         private UI.Video secondUI;
+
+        [SerializeField, Label("Third"), ShowIf("VideoTypeIsUI")]
+        private UI.Video thirdUI;
 
         [SerializeField]
         private float overlapDuration = 0.5f;
@@ -43,12 +49,9 @@ namespace EunomiaUnity
         [SerializeField]
         private bool crossfadeOverlap = true;
 
-        private int currentIndex;
+        private volatile int currentIndex;
 
         private IVideo[] videos;
-
-        // [SerializeField]
-        // private bool allowLoopUntilNextPrepared = false;
 
         public float OverlapDuration
         {
@@ -75,161 +78,43 @@ namespace EunomiaUnity
         {
             get
             {
-                if (videos == null || videos.Length <= currentIndex)
+                lock (this)
                 {
-                    return null;
+                    if (videos == null || videos.Length <= currentIndex)
+                    {
+                        return null;
+                    }
+
+                    return videos[currentIndex];
                 }
-
-                return videos[currentIndex];
-            }
-        }
-
-        [ShowNativeProperty]
-        public VideoClip CurrentVideoClip
-        {
-            get
-            {
-                if (Current != null)
-                {
-                    return Current.VideoClip;
-                }
-
-                return null;
-            }
-        }
-
-        [ShowNativeProperty]
-        public string CurrentUrl
-        {
-            get
-            {
-                if (Current != null)
-                {
-                    return Current.Url;
-                }
-
-                return null;
-            }
-        }
-
-        [ShowNativeProperty]
-        public double CurrentDuration
-        {
-            get
-            {
-                if (Current != null)
-                {
-                    return Current.Duration;
-                }
-
-                return 0;
-            }
-        }
-
-        [ShowNativeProperty]
-        public double CurrentTime
-        {
-            get
-            {
-                if (Current != null)
-                {
-                    return Current.Time;
-                }
-
-                return 0;
-            }
-        }
-
-        [ShowNativeProperty]
-        public Vector2Int CurrentSize
-        {
-            get
-            {
-                if (Next != null)
-                {
-                    return Next.Size;
-                }
-
-                return new Vector2Int(0, 0);
             }
         }
 
         [ShowNativeProperty]
         private IVideo Next
         {
-            get { return videos[(currentIndex + 1).Wrap(videos.Length)]; }
-        }
-
-        [ShowNativeProperty]
-        public VideoClip NextVideoClip
-        {
             get
             {
-                if (Next != null)
+                lock (this)
                 {
-                    return Next.VideoClip;
+                    return videos[(currentIndex + 1).Wrap(videos.Length)];
                 }
-
-                return null;
             }
         }
 
         [ShowNativeProperty]
-        public string NextUrl
+        private IVideo Last
         {
             get
             {
-                if (Next != null)
+                lock (this)
                 {
-                    return Next.Url;
+                    return videos[(currentIndex - 1).Wrap(videos.Length)];
                 }
-
-                return null;
             }
         }
 
-        [ShowNativeProperty]
-        public double NextDuration
-        {
-            get
-            {
-                if (Next != null)
-                {
-                    return Next.Duration;
-                }
-
-                return 0;
-            }
-        }
-
-        [ShowNativeProperty]
-        public double NextTime
-        {
-            get
-            {
-                if (Next != null)
-                {
-                    return Next.Time;
-                }
-
-                return 0;
-            }
-        }
-
-        [ShowNativeProperty]
-        public Vector2Int NextSize
-        {
-            get
-            {
-                if (Next != null)
-                {
-                    return Next.Size;
-                }
-
-                return new Vector2Int(0, 0);
-            }
-        }
-
+        private bool nextSet = false;
         private IVideoNotification currentNotification;
 
         public event EventHandler OnReachedLoopPoint;
@@ -266,7 +151,7 @@ namespace EunomiaUnity
                         return;
                     }
 
-                    videos = new[] { firstWorld, secondWorld };
+                    videos = new[] { firstWorld, secondWorld, thirdWorld };
                     break;
 
                 case VideoType.UI:
@@ -277,7 +162,7 @@ namespace EunomiaUnity
                         return;
                     }
 
-                    videos = new[] { firstUI, secondUI };
+                    videos = new[] { firstUI, secondUI, thirdUI };
                     break;
             }
 
@@ -318,98 +203,70 @@ namespace EunomiaUnity
 
         private void MakeNextBecomeCurrent()
         {
-            currentIndex = (currentIndex + 1).Wrap(videos.Length);
+            lock (this)
+            {
+                currentIndex = (currentIndex + 1).Wrap(videos.Length);
+            }
         }
 
-        private async UniTask EnsureOverlap()
+        private async UniTask LoopWithOverlap()
         {
-            Current.Stop();
-
-            var prepareTask = EnsureNextPrepared();
-
-            MakeNextBecomeCurrent();
-
-            if (Current.IsPlaying == false)
-            {
-                if (overlapDuration > 0)
-                {
-                    if (currentNotification == null)
-                    {
-                        currentNotification = Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
-                    }
-                }
-                await prepareTask;
-                MainThreadDispatcher.Invoke(() => Current.Play());
-            }
+            Last.Stop();
 
             await EnsureNextPrepared();
         }
 
-        private void LoopCurrent()
+        private UniTask ImmediatelyGoToNext()
         {
-            if (Current.IsLooping == false)
-            {
-                Current.IsLooping = true;
-                MainThreadDispatcher.Invoke(() => Current.Play());
-            }
+            return OverlapNext();
         }
 
         private void VideoLoopPointReached(object video, EventArgs args)
         {
             if (overlapDuration > 0)
             {
-                _ = EnsureOverlap();
+                _ = LoopWithOverlap();
             }
             else
             {
-                LoopCurrent();
+                Current.Stop();
+                _ = ImmediatelyGoToNext();
             }
 
             OnReachedLoopPoint?.Invoke(this, args);
         }
 
-        // TODO: work out what happens if next finishes before current
-        private async UniTask OverlapNext()
+        private UniTask ForceNextPrepared()
         {
-            var prepareTask = EnsureNextPrepared();
+            UniTask result;
+            Next.Stop();
+            Next.IsLooping = false;
 
-            if (Next.IsAssignedContent)
+            switch (Current.ContentSource)
             {
-                if (overlapDuration > 0)
-                {
-                    // TODO: double check not already registered
-                    currentNotification = Next.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
-                }
+                case VideoSource.VideoClip:
+                    result = Next.SetVideoClip(Current.VideoClip);
+                    nextSet = true;
+                    break;
 
-                await prepareTask;
-                MainThreadDispatcher.Invoke(() => Next.Play());
+                case VideoSource.Url:
+                    result = Next.SetUrl(Current.Url);
+                    nextSet = true;
+                    break;
+
+                default:
+                    result = UniTask.CompletedTask;
+                    break;
             }
-            else
-            {
-                Debug.LogError("Somehow Next was unable to ensure content", this);
-            }
+            return result;
         }
 
         private UniTask EnsureNextPrepared()
         {
             UniTask result;
-            if (!Next.IsAssignedContent)
+            if (!Next.IsAssignedContent || nextSet == false)
             {
-                Next.Stop();
-                switch (Current.ContentSource)
-                {
-                    case VideoSource.VideoClip:
-                        result = Next.SetVideoClip(Current.VideoClip);
-                        break;
-
-                    case VideoSource.Url:
-                        result = Next.SetUrl(Current.Url);
-                        break;
-
-                    default:
-                        result = UniTask.CompletedTask;
-                        break;
-                }
+                result = ForceNextPrepared();
             }
             else
             {
@@ -425,20 +282,46 @@ namespace EunomiaUnity
                 currentNotification = null;
                 _ = OverlapNext();
             }
+            else
+            {
+                Debug.LogError("Received Overlap Time notification for Next", this);
+            }
 
             OnReachedOverlapPoint?.Invoke(this, EventArgs.Empty);
+        }
+
+        // TODO: work out what happens if next finishes before current
+        private async UniTask OverlapNext()
+        {
+            var prepareTask = EnsureNextPrepared();
+
+            MakeNextBecomeCurrent();
+            nextSet = false;
+
+            if (Current.IsAssignedContent)
+            {
+                // TODO: double check not already registered
+                currentNotification = Current.AddNotificationAtTimeFromEnd(HandleAtOverlapTime, overlapDuration);
+
+                await prepareTask;
+                MainThreadDispatcher.Invoke(() => Current.Play());
+            }
+            else
+            {
+                Debug.LogError("Somehow Next was unable to ensure content", this);
+            }
         }
 
         public void SetNextVideoClip(VideoClip videoClip)
         {
             if (!Current.IsAssignedContent)
             {
-                Current.VideoClip = videoClip;
-                Current.Prepare();
+                Current.SetVideoClip(videoClip);
             }
             else
             {
-                Next.VideoClip = videoClip;
+                Next.SetVideoClip(videoClip);
+                nextSet = true;
             }
         }
 
@@ -446,12 +329,12 @@ namespace EunomiaUnity
         {
             if (!Current.IsAssignedContent)
             {
-                Current.Url = url;
-                Current.Prepare();
+                Current.SetUrl(url);
             }
             else
             {
-                Next.Url = url;
+                Next.SetUrl(url);
+                nextSet = true;
             }
         }
 
@@ -482,8 +365,14 @@ namespace EunomiaUnity
 
         public void Stop()
         {
-            // TODO: Stop should clear all notifications since we're adding every Play
             Current.Stop();
+            if (currentNotification != null)
+            {
+                Current.CancelNotification(currentNotification);
+                currentNotification = null;
+            }
+            Next.Stop();
+            Last.Stop();
         }
 
         private void VideoErrorReceived(object video, string error)
