@@ -28,11 +28,13 @@ namespace EunomiaUnity
             }
         }
 
-        public static UniTask<Texture2D> LoadUrl(string url)
+        public static async UniTask<Texture2D> LoadUrl(string url)
         {
             try
             {
-                return Load(UnityWebRequestTexture.GetTexture(url));
+                var result = await Load(UnityWebRequestTexture.GetTexture(url));
+                result.name = url;
+                return result;
             }
             catch (Exception exception)
             {
@@ -40,11 +42,13 @@ namespace EunomiaUnity
             }
         }
 
-        public static UniTask<Texture2D> LoadUrl(Uri uri)
+        public static async UniTask<Texture2D> LoadUrl(Uri uri)
         {
             try
             {
-                return Load(UnityWebRequestTexture.GetTexture(uri));
+                var result = await Load(UnityWebRequestTexture.GetTexture(uri));
+                result.name = uri.OriginalString;
+                return result;
             }
             catch (Exception exception)
             {
@@ -52,11 +56,13 @@ namespace EunomiaUnity
             }
         }
 
-        public static UniTask<Texture2D> LoadUrl(string url, bool nonReadable)
+        public static async UniTask<Texture2D> LoadUrl(string url, bool nonReadable)
         {
             try
             {
-                return Load(UnityWebRequestTexture.GetTexture(url, nonReadable));
+                var result = await Load(UnityWebRequestTexture.GetTexture(url, nonReadable));
+                result.name = url;
+                return result;
             }
             catch (Exception exception)
             {
@@ -64,11 +70,13 @@ namespace EunomiaUnity
             }
         }
 
-        public static UniTask<Texture2D> LoadUrl(Uri uri, bool nonReadable)
+        public static async UniTask<Texture2D> LoadUrl(Uri uri, bool nonReadable)
         {
             try
             {
-                return Load(UnityWebRequestTexture.GetTexture(uri, nonReadable));
+                var result = await Load(UnityWebRequestTexture.GetTexture(uri, nonReadable));
+                result.name = uri.OriginalString;
+                return result;
             }
             catch (Exception exception)
             {
