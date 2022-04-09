@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
@@ -12,22 +13,30 @@ namespace EunomiaUnity
             Awake,
             Start,
             OnDestroy,
+            AfterProcessorFinished,
             None
         }
         [SerializeField]
         private AutoProcessTime autoProcessTime = AutoProcessTime.Start;
 
+        [SerializeField]
+        private Processor afterProcessorFinished;
+
         protected abstract void AutoProcess();
 
-        void Awake()
+        protected virtual void Awake()
         {
             if (autoProcessTime == AutoProcessTime.Awake)
             {
                 AutoProcess();
             }
+            else if (autoProcessTime == AutoProcessTime.AfterProcessorFinished)
+            {
+                StartCoroutine(AfterProcessorFinishedCoroutine());
+            }
         }
 
-        void Start()
+        protected virtual void Start()
         {
             if (autoProcessTime == AutoProcessTime.Start)
             {
@@ -35,12 +44,18 @@ namespace EunomiaUnity
             }
         }
 
-        void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (autoProcessTime == AutoProcessTime.OnDestroy)
             {
                 AutoProcess();
             }
+        }
+
+        IEnumerator AfterProcessorFinishedCoroutine()
+        {
+            yield return new WaitUntil(() => afterProcessorFinished.HasFinished);
+            AutoProcess();
         }
     }
 }
