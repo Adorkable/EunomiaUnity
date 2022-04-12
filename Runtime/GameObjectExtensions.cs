@@ -19,5 +19,15 @@ namespace EunomiaUnity
         {
             return gameObject.AddComponent<T>().CopyProperties(template);
         }
+
+        public static void SetHideFlagsRecursively(this GameObject gameObject, HideFlags hideFlags)
+        {
+            gameObject.hideFlags = hideFlags;
+            for (int index = 0; index < gameObject.transform.childCount; index++)
+            {
+                var child = gameObject.transform.GetChild(index);
+                child.gameObject.SetHideFlagsRecursively(hideFlags);
+            }
+        }
     }
 }
