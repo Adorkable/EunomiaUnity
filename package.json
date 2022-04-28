@@ -16,7 +16,7 @@
   "author": "Ian G <yo.ian.g@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "com.adorkable.eunomia-csharp": "https://github.com/Adorkable/EunomiaCSharp.git#1.7.0",
+    "com.adorkable.eunomia-csharp": "https://github.com/Adorkable/EunomiaCSharp.git#1.7.1",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm"
   }
