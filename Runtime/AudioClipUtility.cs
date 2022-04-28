@@ -12,17 +12,7 @@ namespace EunomiaUnity
         {
             using (webRequest)
             {
-                await webRequest.SendWebRequest();
-
-                if (webRequest.isNetworkError)
-                {
-                    throw new Exception(webRequest.error);
-                }
-
-                if (webRequest.isHttpError)
-                {
-                    throw new Exception(webRequest.error);
-                }
+                await webRequest.SendWebRequestThrowing();
 
                 return DownloadHandlerAudioClip.GetContent(webRequest);
             }
