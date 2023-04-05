@@ -436,6 +436,11 @@ public abstract class VideoBase : MonoBehaviour, IVideo
         }
     }
 
+    public void SetPlaybackSpeed(float playbackSpeed)
+    {
+        videoPlayer.playbackSpeed = playbackSpeed;
+    }
+
     public IVideoNotification AddNotificationAtPercent(Action<IVideo> perform, float atPercent)
     {
         var notification = new AtPercentNotification()
