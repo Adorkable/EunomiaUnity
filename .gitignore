@@ -2,6 +2,7 @@
 /.DS_Store
 
 /**/._*.*
+/**/._*
 
 # Unity
 /Assets.index
@@ -25,5 +26,7 @@
 /URP Example Assets
 /URP Example Assets.meta
 
+# Documentation
+/Documentation
 
 .DS_Store
