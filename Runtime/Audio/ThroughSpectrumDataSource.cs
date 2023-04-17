@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class ThroughSpectrumDataSource : SpectrumDataSource
+namespace EunomiaUnity
 {
-    [SerializeField]
-    private SpectrumDataSource input;
-
-    public override float[] SpectrumData()
+    public class ThroughSpectrumDataSource : SpectrumDataSource
     {
-        return input.SpectrumData();
+        [SerializeField]
+        private SpectrumDataSource input;
+
+        public override float[] SpectrumData()
+        {
+            return input.SpectrumData();
+        }
     }
 }

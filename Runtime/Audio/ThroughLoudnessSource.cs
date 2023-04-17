@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class ThroughLoudnessSource : LoudnessSource
+namespace EunomiaUnity
 {
-    [SerializeField]
-    private LoudnessSource input;
-
-    public override float Loudness()
+    public class ThroughLoudnessSource : LoudnessSource
     {
-        return input.Loudness();
+        [SerializeField]
+        private LoudnessSource input;
+
+        public override float Loudness()
+        {
+            return input.Loudness();
+        }
     }
 }

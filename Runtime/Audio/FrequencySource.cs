@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public abstract class FrequencySource : MonoBehaviour
+namespace EunomiaUnity
 {
-    public abstract float Frequency();
+    public abstract class FrequencySource : MonoBehaviour
+    {
+        public abstract float Frequency();
+    }
 }

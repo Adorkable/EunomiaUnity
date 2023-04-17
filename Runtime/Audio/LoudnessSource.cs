@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public abstract class LoudnessSource : MonoBehaviour
+namespace EunomiaUnity
 {
-    public abstract float Loudness();
+    public abstract class LoudnessSource : MonoBehaviour
+    {
+        public abstract float Loudness();
+    }
 }

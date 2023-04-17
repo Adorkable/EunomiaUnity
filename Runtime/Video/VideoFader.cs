@@ -6,196 +6,199 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[RequireComponent(typeof (Renderer))]
-public class VideoFader : MonoBehaviour
+namespace EunomiaUnity
 {
-    [SerializeField]
-    public float fadeInDuration = 0.5f;
-
-    [SerializeField]
-    public float fadeOutDuration = 0.5f;
-
-    [SerializeField, Dropdown("GetFadeMaterialParameterOptions")]
-    private string fadeMaterialParameter;
-
-    [SerializeField]
-    private float fadeInAlpha = 1.0f;
-
-    [SerializeField]
-    private float fadeOutAlpha = 0.0f;
-
-    enum FadeMode
+    [RequireComponent(typeof(Renderer))]
+    public class VideoFader : MonoBehaviour
     {
-        None,
-        In,
-        Out
-    }
+        [SerializeField]
+        public float fadeInDuration = 0.5f;
 
-    private FadeMode fadeMode = FadeMode.None;
+        [SerializeField]
+        public float fadeOutDuration = 0.5f;
 
-    private float fadeStart;
+        [SerializeField, Dropdown("GetFadeMaterialParameterOptions")]
+        private string fadeMaterialParameter;
 
-    void Awake()
-    {
-        if (enabled == false)
+        [SerializeField]
+        private float fadeInAlpha = 1.0f;
+
+        [SerializeField]
+        private float fadeOutAlpha = 0.0f;
+
+        enum FadeMode
         {
-            return;
+            None,
+            In,
+            Out
         }
 
-        var rendererComponent = this.RequireComponentInstance<Renderer>();
+        private FadeMode fadeMode = FadeMode.None;
 
-        if (rendererComponent == null)
+        private float fadeStart;
+
+        void Awake()
         {
-            enabled = false;
-            return;
-        }
-        else
-        {
-            rendererComponent.enabled = true;
-        }
-    }
+            if (enabled == false)
+            {
+                return;
+            }
 
-    public void StartFadeOut()
-    {
-        fadeMode = FadeMode.Out;
-        fadeStart = Time.time;
-    }
+            var rendererComponent = this.RequireComponentInstance<Renderer>();
 
-    public void StartFadeIn()
-    {
-        fadeMode = FadeMode.In;
-        fadeStart = Time.time;
-    }
-
-    void Update()
-    {
-        UpdateFade(); // TODO: elaborate insight in Notifications to be able to use it for fading in and fading out
-    }
-
-    void OnEnable()
-    {
-        var rendererComponent = gameObject.GetComponent<Renderer>();
-        if (rendererComponent != null)
-        {
-            rendererComponent.enabled = true;
-        }
-    }
-
-    void OnDisable()
-    {
-        var rendererComponent = gameObject.GetComponent<Renderer>();
-        if (rendererComponent != null)
-        {
-            rendererComponent.enabled = false;
-        }
-    }
-
-    private DropdownList<string> GetFadeMaterialParameterOptions()
-    {
-        var rendererComponent = this.GetComponent<Renderer>();
-        if (rendererComponent == null)
-        {
-            return null;
+            if (rendererComponent == null)
+            {
+                enabled = false;
+                return;
+            }
+            else
+            {
+                rendererComponent.enabled = true;
+            }
         }
 
-        var result = new DropdownList<string>();
-
-        rendererComponent
-            .GetSharedMaterialShaderProperties(ShaderPropertyType.Color)
-            .ForEach((parameterName) =>
-                result.Add(parameterName, parameterName));
-
-        return result;
-    }
-
-    private void UpdateFade()
-    {
-        switch (fadeMode)
+        public void StartFadeOut()
         {
-            case FadeMode.Out:
-                FadeOut();
-                break;
-            case FadeMode.In:
-                FadeIn();
-                break;
-            case FadeMode.None:
-                break;
-        }
-    }
-
-    private void FadeOut()
-    {
-        if (fadeOutDuration <= 0)
-        {
-            fadeMode = FadeMode.None;
-            return;
+            fadeMode = FadeMode.Out;
+            fadeStart = Time.time;
         }
 
-        var rendererComponent = gameObject.GetComponent<Renderer>();
-        if (rendererComponent == null || rendererComponent.material == null)
+        public void StartFadeIn()
         {
-            return; // TODO: throw?
+            fadeMode = FadeMode.In;
+            fadeStart = Time.time;
         }
 
-        var color = rendererComponent.material.GetColor(fadeMaterialParameter);
-
-        float newAlpha;
-        if (Time.time - fadeStart <= fadeOutDuration)
+        void Update()
         {
-            newAlpha =
-                (Time.time - fadeStart)
-                    .Map(0, fadeOutDuration, fadeInAlpha, fadeOutAlpha);
-        }
-        else
-        {
-            newAlpha = fadeOutAlpha;
-            fadeMode = FadeMode.None;
+            UpdateFade(); // TODO: elaborate insight in Notifications to be able to use it for fading in and fading out
         }
 
-        if (newAlpha == color.a)
+        void OnEnable()
         {
-            return;
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
+            {
+                rendererComponent.enabled = true;
+            }
         }
 
-        var newColor = new Color(color.r, color.g, color.b, newAlpha);
-        rendererComponent.material.SetColor (fadeMaterialParameter, newColor);
-    }
-
-    private void FadeIn()
-    {
-        if (fadeInDuration <= 0)
+        void OnDisable()
         {
-            fadeMode = FadeMode.None;
-            return;
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent != null)
+            {
+                rendererComponent.enabled = false;
+            }
         }
 
-        var rendererComponent = gameObject.GetComponent<Renderer>();
-        if (rendererComponent == null || rendererComponent.material == null)
+        private DropdownList<string> GetFadeMaterialParameterOptions()
         {
-            return; // TODO: throw?
+            var rendererComponent = this.GetComponent<Renderer>();
+            if (rendererComponent == null)
+            {
+                return null;
+            }
+
+            var result = new DropdownList<string>();
+
+            rendererComponent
+                .GetSharedMaterialShaderProperties(ShaderPropertyType.Color)
+                .ForEach((parameterName) =>
+                    result.Add(parameterName, parameterName));
+
+            return result;
         }
 
-        var color = rendererComponent.material.GetColor(fadeMaterialParameter);
-
-        float newAlpha;
-        if (Time.time - fadeStart <= fadeInDuration)
+        private void UpdateFade()
         {
-            newAlpha =
-                (Time.time - fadeStart)
-                    .Map(0, fadeInDuration, fadeOutAlpha, fadeInAlpha);
-        }
-        else
-        {
-            newAlpha = fadeInAlpha;
-            fadeMode = FadeMode.None;
-        }
-
-        if (newAlpha == color.a)
-        {
-            return;
+            switch (fadeMode)
+            {
+                case FadeMode.Out:
+                    FadeOut();
+                    break;
+                case FadeMode.In:
+                    FadeIn();
+                    break;
+                case FadeMode.None:
+                    break;
+            }
         }
 
-        var newColor = new Color(color.r, color.g, color.b, newAlpha);
-        rendererComponent.material.SetColor (fadeMaterialParameter, newColor);
+        private void FadeOut()
+        {
+            if (fadeOutDuration <= 0)
+            {
+                fadeMode = FadeMode.None;
+                return;
+            }
+
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent == null || rendererComponent.material == null)
+            {
+                return; // TODO: throw?
+            }
+
+            var color = rendererComponent.material.GetColor(fadeMaterialParameter);
+
+            float newAlpha;
+            if (Time.time - fadeStart <= fadeOutDuration)
+            {
+                newAlpha =
+                    (Time.time - fadeStart)
+                        .Map(0, fadeOutDuration, fadeInAlpha, fadeOutAlpha);
+            }
+            else
+            {
+                newAlpha = fadeOutAlpha;
+                fadeMode = FadeMode.None;
+            }
+
+            if (newAlpha == color.a)
+            {
+                return;
+            }
+
+            var newColor = new Color(color.r, color.g, color.b, newAlpha);
+            rendererComponent.material.SetColor(fadeMaterialParameter, newColor);
+        }
+
+        private void FadeIn()
+        {
+            if (fadeInDuration <= 0)
+            {
+                fadeMode = FadeMode.None;
+                return;
+            }
+
+            var rendererComponent = gameObject.GetComponent<Renderer>();
+            if (rendererComponent == null || rendererComponent.material == null)
+            {
+                return; // TODO: throw?
+            }
+
+            var color = rendererComponent.material.GetColor(fadeMaterialParameter);
+
+            float newAlpha;
+            if (Time.time - fadeStart <= fadeInDuration)
+            {
+                newAlpha =
+                    (Time.time - fadeStart)
+                        .Map(0, fadeInDuration, fadeOutAlpha, fadeInAlpha);
+            }
+            else
+            {
+                newAlpha = fadeInAlpha;
+                fadeMode = FadeMode.None;
+            }
+
+            if (newAlpha == color.a)
+            {
+                return;
+            }
+
+            var newColor = new Color(color.r, color.g, color.b, newAlpha);
+            rendererComponent.material.SetColor(fadeMaterialParameter, newColor);
+        }
     }
 }

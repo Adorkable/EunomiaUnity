@@ -1,24 +1,27 @@
 using NaughtyAttributes;
 using UnityEngine;
 
-public class AudioClipLoudnessSource : LoudnessSource
+namespace EunomiaUnity
 {
-    [SerializeField]
-    private AudioSource audioSource;
-    [SerializeField]
-    int sampleRange = 100;
-    [SerializeField]
-    int channel = -1;
-
-    [SerializeField, ReadOnly]
-    float loudness;
-
-    public override float Loudness()
+    public class AudioClipLoudnessSource : LoudnessSource
     {
-        if (audioSource == null)
+        [SerializeField]
+        private AudioSource audioSource;
+        [SerializeField]
+        int sampleRange = 100;
+        [SerializeField]
+        int channel = -1;
+
+        [SerializeField, ReadOnly]
+        float loudness;
+
+        public override float Loudness()
         {
-            return 0;
+            if (audioSource == null)
+            {
+                return 0;
+            }
+            return audioSource.CurrentAudioClipLoudness(sampleRange, channel);
         }
-        return audioSource.CurrentAudioClipLoudness(sampleRange, channel);
     }
 }

@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class ThroughFrequencySource : FrequencySource
+namespace EunomiaUnity
 {
-    [SerializeField]
-    private FrequencySource input;
-
-    public override float Frequency()
+    public class ThroughFrequencySource : FrequencySource
     {
-        return input.Frequency();
+        [SerializeField]
+        private FrequencySource input;
+
+        public override float Frequency()
+        {
+            return input.Frequency();
+        }
     }
 }

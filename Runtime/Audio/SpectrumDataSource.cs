@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public abstract class SpectrumDataSource : MonoBehaviour
+namespace EunomiaUnity
 {
-    public abstract float[] SpectrumData();
+    public abstract class SpectrumDataSource : MonoBehaviour
+    {
+        public abstract float[] SpectrumData();
+    }
 }

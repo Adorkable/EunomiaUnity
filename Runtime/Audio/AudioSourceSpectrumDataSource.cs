@@ -5,18 +5,20 @@ using EunomiaUnity;
 using NaughtyAttributes;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
-public class AudioSourceSpectrumDataSource : SpectrumDataSource
+namespace EunomiaUnity
 {
-    private AudioSource audioSource;
-    [SerializeField]
-    private FFTWindow spectrumDataWindow = FFTWindow.Rectangular;
-
-    private List<int> sampleRangeValues
+    [RequireComponent(typeof(AudioSource))]
+    public class AudioSourceSpectrumDataSource : SpectrumDataSource
     {
-        get
+        private AudioSource audioSource;
+        [SerializeField]
+        private FFTWindow spectrumDataWindow = FFTWindow.Rectangular;
+
+        private List<int> sampleRangeValues
         {
-            return new int[] {
+            get
+            {
+                return new int[] {
                 64,
                 128,
                 256,
@@ -26,24 +28,25 @@ public class AudioSourceSpectrumDataSource : SpectrumDataSource
                 4096,
                 8192
             }.ToList();
+            }
         }
-    }
-    [SerializeField, Dropdown("sampleRangeValues")]
-    int sampleRange = 64;
-    [SerializeField, Tooltip("Value < 1 to summate all channels")]
-    private int channel = -1;
+        [SerializeField, Dropdown("sampleRangeValues")]
+        int sampleRange = 64;
+        [SerializeField, Tooltip("Value < 1 to summate all channels")]
+        private int channel = -1;
 
-    void Awake()
-    {
-        audioSource = this.RequireComponentInstance<AudioSource>();
-    }
-
-    public override float[] SpectrumData()
-    {
-        if (audioSource == null)
+        void Awake()
         {
-            return new float[0];
+            audioSource = this.RequireComponentInstance<AudioSource>();
         }
-        return audioSource.GetSpectrumDataSafe(sampleRange, channel, spectrumDataWindow);
+
+        public override float[] SpectrumData()
+        {
+            if (audioSource == null)
+            {
+                return new float[0];
+            }
+            return audioSource.GetSpectrumDataSafe(sampleRange, channel, spectrumDataWindow);
+        }
     }
 }

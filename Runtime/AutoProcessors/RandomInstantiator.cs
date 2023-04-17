@@ -2,45 +2,48 @@ using Eunomia;
 using EunomiaUnity;
 using UnityEngine;
 
-public class RandomInstantiator : AutoProcessor
+namespace EunomiaUnity
 {
-    private bool hasStarted;
-    override public bool HasStarted => hasStarted;
-    private bool hasFinished;
-    override public bool HasFinished => hasFinished;
-
-    [SerializeField]
-    private GameObject[] templates;
-    [SerializeField]
-    private bool matchPosition = false;
-    [SerializeField]
-    private bool matchRotation = false;
-    [SerializeField]
-    private bool matchScale = false;
-
-    protected override void AutoProcess()
+    public class RandomInstantiator : AutoProcessor
     {
-        hasStarted = true;
+        private bool hasStarted;
+        override public bool HasStarted => hasStarted;
+        private bool hasFinished;
+        override public bool HasFinished => hasFinished;
 
-        var template = templates.RandomElement();
+        [SerializeField]
+        private GameObject[] templates;
+        [SerializeField]
+        private bool matchPosition = false;
+        [SerializeField]
+        private bool matchRotation = false;
+        [SerializeField]
+        private bool matchScale = false;
 
-        var instance = Instantiate(template);
-
-        if (matchPosition)
+        protected override void AutoProcess()
         {
-            instance.transform.position = transform.position;
-        }
-        if (matchRotation)
-        {
-            instance.transform.rotation = transform.rotation;
-        }
-        if (matchScale)
-        {
-            instance.transform.localScale = transform.localScale;
-        }
+            hasStarted = true;
 
-        instance.transform.parent = transform;
+            var template = templates.RandomElement();
 
-        hasFinished = true;
+            var instance = Instantiate(template);
+
+            if (matchPosition)
+            {
+                instance.transform.position = transform.position;
+            }
+            if (matchRotation)
+            {
+                instance.transform.rotation = transform.rotation;
+            }
+            if (matchScale)
+            {
+                instance.transform.localScale = transform.localScale;
+            }
+
+            instance.transform.parent = transform;
+
+            hasFinished = true;
+        }
     }
 }
