@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Version>1.4.2</Version>
+        <Authors>Ian G &lt;yo.ian.g@gmail.com&gt;</Authors>
+        <Company>Adorkable LLC</Company>
+        <Product>Eunomia Unity</Product>
+        <Description>The team's go-to utilities for Unity, named for the Greek goddess of green pastures, law and legislation</Description>
+        <Copyright/>
+        <PackageProjectUrl>https://github.com/Adorkable/EunomiaUnity</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Adorkable/EunomiaUnity</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <PackageTags>csharp, utility, library, eunomia, unity</PackageTags>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    </PropertyGroup>
+</Project>
