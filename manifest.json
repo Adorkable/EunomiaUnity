@@ -1,0 +1,1309 @@
+{
+  "sitemap": {
+    "baseUrl": "https://adorkable.github.io/EunomiaUnity/",
+    "changefreq": "weekly",
+    "priority": 0.1
+  },
+  "homepages": [],
+  "source_base_path": "/github/workspace/.docfx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ApplicationExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ApplicationExtensions.html",
+          "hash": "rlgz0iEw5660330Qkcs4Qg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AsyncOperationExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AsyncOperationExtensions.html",
+          "hash": "Vgk3uyE/s3hoZwnYHRiLNg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioClipExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioClipExtensions.html",
+          "hash": "iTdgnsuq+LI4+vbI5VFtUQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioClipLoudnessSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioClipLoudnessSource.html",
+          "hash": "P7pqEbMwXXYLdsqH5g5htg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioClipUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioClipUtility.html",
+          "hash": "buUZf9VvI79EPGr7fK40Cw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioSourceExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioSourceExtensions.html",
+          "hash": "FwFsRbiyIcPxuXNNR9ucJg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioSourceFrequencySource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioSourceFrequencySource.html",
+          "hash": "papBJzetnPASt25zuzi4eA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioSourceLoudnessSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioSourceLoudnessSource.html",
+          "hash": "ceVE3nMDI+8gc4d6SZf+AQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AudioSourceSpectrumDataSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AudioSourceSpectrumDataSource.html",
+          "hash": "wwVHMMTrp3KAxq7V8RPPnw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoDestroy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoDestroy.html",
+          "hash": "HxWeWap5gPIt95rZfSPMFA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoMatchCameraFieldOfViewOnce.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoMatchCameraFieldOfViewOnce.html",
+          "hash": "J5YoebsVko0LEp4ignRyKg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoMatchTransformOnce.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoMatchTransformOnce.html",
+          "hash": "A4OIR1AecGEl8AsF1o3AOw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoProcessor.AutoProcessTime.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoProcessor.AutoProcessTime.html",
+          "hash": "Hq/rGjIbx8gTk+9MjOEuBQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoProcessor.html",
+          "hash": "TVBv4FJ9rp5mxWU3NdMV9g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoSetInactive.When.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoSetInactive.When.html",
+          "hash": "AUAM3P4p3TtpZ7FuaS+uKQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.AutoSetInactive.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.AutoSetInactive.html",
+          "hash": "ncbZKXQ8PSaVuDdtcz72LQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ComponentExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ComponentExtensions.html",
+          "hash": "TtvfvnUoK89WkwPcxv6Vlw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.EunomiaUnityInitializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.EunomiaUnityInitializer.html",
+          "hash": "4j6cWlOvcvbS5y5u1RNLKg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.EventHandlerExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.EventHandlerExtensions.html",
+          "hash": "Z24t5hutv+2lJMnUcpLZkA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ExclusiveFallbackActivator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ExclusiveFallbackActivator.html",
+          "hash": "9PS3tE1xngG7YV0hA4Qd0Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.FakeLocationGenerator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.FakeLocationGenerator.html",
+          "hash": "P6VPKF0pOqcQUwveR8FV3g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.FitWithAspect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.FitWithAspect.html",
+          "hash": "hhHmLC3B8yers8Q9EMWspQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.FloatArrayExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.FloatArrayExtensions.html",
+          "hash": "tbAEyIXOj8r42kNEVYppZQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.FrequencySource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.FrequencySource.html",
+          "hash": "QyKnH7okMyviYiRcyUPJAQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.GameObjectExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.GameObjectExtensions.html",
+          "hash": "m4gSQcpCNsOy/TqIUygfww=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.IGetKeyDownSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.IGetKeyDownSource.html",
+          "hash": "0dKFlyYCZxyjdHPEUl/n4A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.IVideo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.IVideo.html",
+          "hash": "iNLWrutM3xIPDyDUggjMTA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.IVideoNotification.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.IVideoNotification.html",
+          "hash": "pPqU++Myi5j6xfw6QEkP2w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Initializer.When.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Initializer.When.html",
+          "hash": "25mtlKBzjTu5z9kSIb88EQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Initializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Initializer.html",
+          "hash": "+sw4aN2ATqHSqL/VKvTrUg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.KalmanFilterVector2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.KalmanFilterVector2.html",
+          "hash": "H6BzSv7n89hswrfIPJMq8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.KalmanFilterVector3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.KalmanFilterVector3.html",
+          "hash": "p9eVBkcxCyfLeSA4i7T1Hg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.KalmanFilterVector4.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.KalmanFilterVector4.html",
+          "hash": "hfTV0XWrjqj4dpjc1zS44g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ListBoundsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ListBoundsExtensions.html",
+          "hash": "ATjgsNUV2TD2QuM2dv0Uyw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.LoudnessSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.LoudnessSource.html",
+          "hash": "X8tX9gNOzp3B9I8mZ5uHCw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MainThreadDispatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MainThreadDispatcher.html",
+          "hash": "7gPQZSto5BvG+o4eFW0JxA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MaterialExposer.MaterialColor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MaterialExposer.MaterialColor.html",
+          "hash": "nMXwEcFmmuktE1O3r1KwgQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MaterialExposer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MaterialExposer.html",
+          "hash": "nhiXWMwnkGWRcYpsdJXrPQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MaterialExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MaterialExtensions.html",
+          "hash": "ImGjDllAF9LPrRqQ/9PymQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MicrophoneAudioSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MicrophoneAudioSource.html",
+          "hash": "jouZSJv7xvroIRjVUTkqZQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MonoBehaviorExtensions_LogMissingRequired.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MonoBehaviorExtensions_LogMissingRequired.html",
+          "hash": "+fkyfCoFIVD9YpGDYNqOkg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.MonoBehaviorExtensions_Require.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.MonoBehaviorExtensions_Require.html",
+          "hash": "41zB4LagcRiZn9VYn2GdWw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OnFinishedDeactivator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OnFinishedDeactivator.html",
+          "hash": "kYdi/mALTLtawCgvAZFGFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OnFinishedDestroyer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OnFinishedDestroyer.html",
+          "hash": "eO6EqjZzIAimd5BmQohwyg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OnFinishedEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OnFinishedEvent.html",
+          "hash": "p4+2SXBwv5IElU6vzBJWVw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OnFinishedResponder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OnFinishedResponder.html",
+          "hash": "ocA3dexXJqvnkEEjwgboVg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OnFinishedUnityEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OnFinishedUnityEvent.html",
+          "hash": "ppmDMefmIlC9CIgpqqPsiw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OverlappingVideos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OverlappingVideos.html",
+          "hash": "I+52qvUILCO2vxH5ApOPVg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.OverlappingVideosController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.OverlappingVideosController.html",
+          "hash": "08t039MI2/KRJS478l2GnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Processor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Processor.html",
+          "hash": "5hrRZCZahQby7phhSy6mgw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.PublisherUnityEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.PublisherUnityEvent-1.html",
+          "hash": "WH2J3g9priBfRfpo2CFSRw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.PublisherUnityEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.PublisherUnityEvent.html",
+          "hash": "SYhcGKvqURppIQWUbIP0Gw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Random.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Random.html",
+          "hash": "6qBPH75rDx0kMwQYkGYaxg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RandomInstantiator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RandomInstantiator.html",
+          "hash": "C7pqvM92kONscSVZUgq4Vw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RandomizeFloatParameterStateMachineBehaviour.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RandomizeFloatParameterStateMachineBehaviour.html",
+          "hash": "b5TstE3AS5hTtrnZhh39Gg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RectTransformExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RectTransformExtensions.html",
+          "hash": "HWvsgG+UkC1LxaV0+V4QTg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RenderTextureExtensions_Clear.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RenderTextureExtensions_Clear.html",
+          "hash": "/23Ymd3rcUnaZuXwCxDk1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RenderTextureExtensions_WriteToDisk.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RenderTextureExtensions_WriteToDisk.html",
+          "hash": "HeSq3H34RrMWBiO+Eql2vw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RendererExtensions.ColorOperation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RendererExtensions.ColorOperation.html",
+          "hash": "9v4p38dkttmE5pJK8QhaRg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.RendererExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.RendererExtensions.html",
+          "hash": "IS1d442yBQ0WEobSE6e4Ng=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Rotator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Rotator.html",
+          "hash": "ocO9mQGZsUnShO9Ut7rV3Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SecretCode.MatchEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SecretCode.MatchEvent.html",
+          "hash": "Q9psGQLG9Paq1xz995FIhA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SecretCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SecretCode.html",
+          "hash": "ILcZnESb9LYTiKAzTcxEhA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SecretCodeDetector.Attempt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SecretCodeDetector.Attempt.html",
+          "hash": "C6eIgrWJ/wtx1mwf+wb3IQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SecretCodeDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SecretCodeDetector.html",
+          "hash": "7qbj1XktM01fmOZxwEOnWQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SetBoolParameterStateMachineBehaviour.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SetBoolParameterStateMachineBehaviour.html",
+          "hash": "Bm7t77Iwl+wgLuk+tDc0Lg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ShaderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ShaderExtensions.html",
+          "hash": "csTy1YIaeT08pG6kKPV2uQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SkyboxRotator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SkyboxRotator.html",
+          "hash": "dYjF5p2DwiOee/D685sBkg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SpectrumDataSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SpectrumDataSource.html",
+          "hash": "71NH/JDEOPNdY3LMguxj0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.SpriteUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.SpriteUtility.html",
+          "hash": "crOLIVreGJQ9gbYEicaa7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextAssetExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextAssetExtensions.html",
+          "hash": "GeknYkL6WJJCcj1Wk+in9w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToMacOSSay.Voice.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToMacOSSay.Voice.html",
+          "hash": "iCcVWfehznHj+Npu3W9hrw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToMacOSSay.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToMacOSSay.html",
+          "hash": "XALoDfBUG6nb1MHaqZ3XQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeech.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeech.html",
+          "hash": "mPmLzJB0kUR02kYIrEiNRg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechManager.EditorTextToSpeechType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechManager.EditorTextToSpeechType.html",
+          "hash": "T2EsqQD6rwjCxOoY21Xidw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechManager.html",
+          "hash": "xdMxUzdNFOIU7/2GFb3V6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechUnityConsole.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToSpeechUnityConsole.html",
+          "hash": "d1PQHb/OUdCzFz4usGBdKg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.TextToUnityConsole.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.TextToUnityConsole.html",
+          "hash": "W7YxsO0WuNelKiHspnCvEA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.UI.TextToUIText.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.UI.TextToUIText.html",
+          "hash": "bDhrUa++jcxvYEZtCCIB7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.UI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.UI.html",
+          "hash": "QnV+e965rfQD+7ZWiLLG5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TextToSpeech.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TextToSpeech.html",
+          "hash": "DLBWS4AWLWopdFVyIPlLvw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Texture2DExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Texture2DExtensions.html",
+          "hash": "iPEQ38zGRkG4M6BH0tFp/Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Texture2DUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Texture2DUtility.html",
+          "hash": "F1S357x8dXhOWFHT1E6yXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ThroughFrequencySource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ThroughFrequencySource.html",
+          "hash": "cR9EKn3TmpYUJiuKviJyug=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ThroughLoudnessSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ThroughLoudnessSource.html",
+          "hash": "R4VLRS23ROsk8sQYjfWuJg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.ThroughSpectrumDataSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.ThroughSpectrumDataSource.html",
+          "hash": "+Vgdss/rTydOZLuBnu/new=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.TimedMultiTest-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.TimedMultiTest-1.html",
+          "hash": "2rdz5UgXLuAHpf4MOQRUCg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UI.Image.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UI.Image.html",
+          "hash": "9uwHwKUex4NK26jDYKWfMQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UI.OverlappingVideos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UI.OverlappingVideos.html",
+          "hash": "uix7ybQAoy7Db0xrYfm7ww=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UI.Video.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UI.Video.html",
+          "hash": "SLTk0czdwXQaOvcBW8o2yg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UI.html",
+          "hash": "GK+eBJ0bs0Lp/LOoaqZUHA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UnityEngineRandomWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UnityEngineRandomWrapper.html",
+          "hash": "+8zjZRv68nbzuD4fGvItMg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UnityEventExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UnityEventExtensions.html",
+          "hash": "d6/M9m//uO9xvhwdpi5cOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.UnityWebRequestExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.UnityWebRequestExtensions.html",
+          "hash": "m9/v5/h2aDwzxFQjYEXo2g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.Video.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.Video.html",
+          "hash": "LqeoxV9KG5c4wqH5DxJGNw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.VideoBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.VideoBase.html",
+          "hash": "+pTk9EdD+HPQTQkMs9BzyA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.VideoFader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.VideoFader.html",
+          "hash": "0tuZXxtlVk1rRFggaPfq8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.VideoPlayerExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.VideoPlayerExtensions.html",
+          "hash": "a5969QazBJSbyevt4+rsQQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.VideoPlaylist.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.VideoPlaylist.html",
+          "hash": "XSQwvF7FFAhZTO0NbYyLlA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/EunomiaUnity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EunomiaUnity.html",
+          "hash": "/DIQt9IiVMaW6BpUMinhcA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "RJwTX1JRa59zdeiKNOoNpw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "WEPfnR/qRglPHo7rsTSBXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "65j+a+LoETGpHXA8aEpXPw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "oVp8W56frhocqBAxuIfLTw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 2,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 100,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
