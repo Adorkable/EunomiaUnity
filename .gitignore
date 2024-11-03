@@ -1,4 +1,5 @@
 # macOS
+.DS_Store
 /.DS_Store
 
 # macOS index files
@@ -30,4 +31,8 @@
 # Documentation
 /Documentation
 
-.DS_Store
+# Build files
+Runtime/obj/*
+
+# Visual Studio files
+.vs/*
